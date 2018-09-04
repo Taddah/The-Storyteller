@@ -1,12 +1,13 @@
-﻿using System;
-
-namespace The_Storyteller
+﻿namespace The_Storyteller
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            using (var b = new TheStoryteller())
+            {
+                b.RunAsync().Wait();
+            }
         }
     }
 }
