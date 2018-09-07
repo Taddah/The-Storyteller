@@ -4,6 +4,7 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.CommandsNext.Converters;
 using DSharpPlus.Entities;
 using The_Storyteller.Entities;
+using The_Storyteller.Entities.Tools;
 using The_Storyteller.Models;
 using The_Storyteller.Models.MCharacter;
 
@@ -67,6 +68,7 @@ namespace The_Storyteller.Commands.CCharacter
             else
             {
                 foreach (var s in name) strName += s + " ";
+                strName = strName.Remove(strName.Length-1);
             }
 
             c = dep.Entities.Characters.GetCharacterByTrueName(strName);
@@ -86,6 +88,7 @@ namespace The_Storyteller.Commands.CCharacter
             {
                 Title = $"{c.Name} **{c.TrueName}**",
                 Description = $"Energy : {c.Energy}/{c.MaxEnergy}",
+                Color = Config.Instance.Color,
                 Footer = new DiscordEmbedBuilder.EmbedFooter
                 {
                     Text = $"Location : [{c.Location.XPosition}:{c.Location.YPosition}]"
@@ -111,9 +114,10 @@ namespace The_Storyteller.Commands.CCharacter
             {
                 Title = $"{c.Name} **{c.TrueName}**",
                 Description = $"Level: {c.Level}",
+                Color = Config.Instance.Color,
                 Footer = new DiscordEmbedBuilder.EmbedFooter
                 {
-                    Text = "Location : [Near **VILLAGE X**"
+                    Text = $"Location : {dep.Entities.Map.GetRegionByLocation(c.Location).Name}"
                 },
                 ThumbnailUrl = "https://s33.postimg.cc/h0wkmhnm7/153046781869422717_1.png"
             };

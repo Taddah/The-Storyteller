@@ -51,26 +51,24 @@ namespace The_Storyteller.Entities.Game
             return null;
         }
 
-        public Region GenerateNewRegion(int size, ulong id, string name, bool forceValable = false)
+        public RegionType GetRandomRegionType()
+        {
+            var random = new Random();
+            var valuesRegionType = Enum.GetValues(typeof(RegionType));
+            return (RegionType)valuesRegionType.GetValue(random.Next(valuesRegionType.Length));
+        }
+
+        public Region GenerateNewRegion(int size, ulong id, string name, RegionType regionType, bool forceValable = false)
         {
             var random = new Random();
             var r = new Region
             {
                 Name = name,
-                Id = id
+                Id = id,
+                Type = regionType
             };
 
-            if (forceValable)
-                r.Type = RegionType.Plain;
-            else
-            {
-                var valuesRegionType = Enum.GetValues(typeof(RegionType));
-                r.Type = (RegionType)valuesRegionType.GetValue(random.Next(valuesRegionType.Length));
-            }
-
-
             var values = Enum.GetValues(typeof(CaseType));
-            
 
             var centralCase = GetNextCentralCase();
             var baseX = centralCase.XPosition - (int)Math.Floor(Convert.ToDecimal(size / 2));

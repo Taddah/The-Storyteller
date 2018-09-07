@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Interactivity;
+using System;
+using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Models;
 using The_Storyteller.Models.MMap;
@@ -29,44 +29,51 @@ namespace The_Storyteller.Commands.CGeneral
                 return;
             }
 
-            var interactivity = ctx.Client.GetInteractivityModule();
+            InteractivityModule interactivity = ctx.Client.GetInteractivityModule();
 
-            var regionName = "";
-            var nameValid = false;
+            string regionName = "";
+            bool nameValid = false;
 
             //First look if a region is available
-            var r = dep.Entities.Map.GetAvailableRegion();
-            if(r!= null)
-            {
-                r.Id = ctx.Guild.Id;
-            }
-            else
+            Region r = dep.Entities.Map.GetAvailableRegion();
+            if (r == null)
             {
                 //Not ok, generate new region
-                var embedChooseName = dep.Embed.createEmbed(dep.Resources.GetString("introductionChooseName"));
+                r = new Region
+                {
+                    Type = RegionType.Plain
+                };
+
+                DSharpPlus.Entities.DiscordEmbedBuilder embedChooseName = dep.Embed.createEmbed(dep.Resources.GetString("introductionChooseName", region: r));
                 await ctx.RespondAsync(embed: embedChooseName);
+
                 do
                 {
-                    
 
-                    var msgGuildName = await interactivity.WaitForMessageAsync(
+                    MessageContext msgGuildName = await interactivity.WaitForMessageAsync(
                         xm => xm.Author.Id == ctx.User.Id && xm.ChannelId == ctx.Channel.Id, TimeSpan.FromMinutes(1));
-                    if (msgGuildName != null) regionName = msgGuildName.Message.Content;
+                    if (msgGuildName != null)
+                    {
+                        regionName = msgGuildName.Message.Content;
+                    }
 
                     if (!dep.Entities.Map.IsRegionNameTaken(regionName) && regionName.Length > 3 && regionName.Length <= 50)
+                    {
                         nameValid = true;
+                    }
                     else
                     {
-                        var embed = dep.Embed.createEmbed(dep.Resources.GetString("regionNameTaken"));
+                        DSharpPlus.Entities.DiscordEmbedBuilder embed = dep.Embed.createEmbed(dep.Resources.GetString("regionNameTaken"));
                         await ctx.RespondAsync(embed: embed);
                     }
                 } while (!nameValid);
-                r = dep.Entities.Map.GenerateNewRegion(9, ctx.Guild.Id, regionName, true);
+                r = dep.Entities.Map.GenerateNewRegion(9, ctx.Guild.Id, regionName, r.Type, true);
+                Console.WriteLine(r.Name);
             }
-            
 
-           
-            var g = new Guild
+            Console.WriteLine(r.Name);
+            r.Id = ctx.Guild.Id;
+            Guild g = new Guild
             {
                 Id = ctx.Guild.Id,
                 MemberCount = ctx.Guild.MemberCount,
@@ -76,7 +83,7 @@ namespace The_Storyteller.Commands.CGeneral
             };
             dep.Entities.Guilds.AddGuild(g);
 
-            var embedEnd = dep.Embed.createEmbed(dep.Resources.GetString("introductionGenFinish", region: r),
+            DSharpPlus.Entities.DiscordEmbedBuilder embedEnd = dep.Embed.createEmbed(dep.Resources.GetString("introductionGenFinish", region: r),
                 dep.Resources.GetString("introTypeStart"), true);
 
             await ctx.RespondAsync(embed: embedEnd);

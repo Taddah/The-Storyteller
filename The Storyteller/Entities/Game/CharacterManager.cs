@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using The_Storyteller.Models;
 using The_Storyteller.Models.MCharacter;
@@ -16,9 +19,12 @@ namespace The_Storyteller.Entities.Game
         {
             _filename = filename;
             _characters = LoadFromFile();
+
+            Task task = new Task(async () => await DoPeriodicCharacterSave());
+            task.Start();
         }
 
-        public List<Character> LoadFromFile()
+        private List<Character> LoadFromFile()
         {
             if (!File.Exists(_filename))
                 return new List<Character>();
@@ -30,12 +36,27 @@ namespace The_Storyteller.Entities.Game
             }
         }
 
-        public void SaveToFile()
+        private async Task SaveToFile()
         {
             using (var sw = new StreamWriter(_filename))
             {
-                sw.Write(JsonConvert.SerializeObject(_characters));
+                await sw.WriteAsync(JsonConvert.SerializeObject(_characters));
             }
+        }
+
+        public async Task DoPeriodicCharacterSave()
+        {
+            while (true)
+            {
+                await SaveToFile();
+                Thread.Sleep(TimeSpan.FromSeconds(10));
+            }
+        }
+
+        public void StartAsyncSave()
+        {
+            Task task = new Task(async () => await SaveToFile());
+            task.Start();
         }
 
         public void AddCharacter(Character c)
@@ -43,7 +64,7 @@ namespace The_Storyteller.Entities.Game
             if (!IsPresent(c.Id))
             {
                 _characters.Add(c);
-                SaveToFile();
+                StartAsyncSave();
             }
         }
 
@@ -53,7 +74,7 @@ namespace The_Storyteller.Entities.Game
             {
                 var oldC = GetCharacterById(c.Id);
                 oldC = c;
-                SaveToFile();
+                StartAsyncSave();
             }
         }
 
@@ -64,9 +85,7 @@ namespace The_Storyteller.Entities.Game
 
         public Character GetCharacterByTrueName(string trueName)
         {
-            var ch = _characters.SingleOrDefault(c => c.TrueName == trueName);
-
-            return ch;
+            return _characters.SingleOrDefault(c => c.TrueName.ToLower() == trueName.ToLower());
         }
 
         public bool IsPresent(ulong id)

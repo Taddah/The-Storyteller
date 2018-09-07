@@ -8,7 +8,7 @@ namespace The_Storyteller.Entities.Tools
         {
             var embed = new DiscordEmbedBuilder();
             embed.Description = mainText;
-            embed.Color = DiscordColor.IndianRed;
+            embed.Color = Config.Instance.Color;
 
             if (optionalText.Length > 0)
                 embed.Footer = new DiscordEmbedBuilder.EmbedFooter

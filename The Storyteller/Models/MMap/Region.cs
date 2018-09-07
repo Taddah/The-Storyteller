@@ -49,7 +49,10 @@ namespace The_Storyteller.Models.MMap
 
         public Case GetCentralCase()
         {
-            return _cases[(int) Math.Floor((decimal) (GetSize() * GetSize()) / 2)];
+            if(_cases.Count > 0 && _cases.Count == GetSize()*GetSize())
+                return _cases[(int) Math.Floor((decimal) (GetSize() * GetSize()) / 2)];
+
+            return null;
         }
     }
 }

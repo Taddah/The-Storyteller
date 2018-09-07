@@ -26,42 +26,64 @@ namespace The_Storyteller.Entities.Tools
 
             if (region != null)
             {
-                result = result.Replace("$REGIONNAME", region.Name);
-                switch (region.Type)
-                {
-                    case RegionType.Desert: result = result.Replace("$REGIONTYPE", "desert region"); break;
-                    case RegionType.Mountain: result = result.Replace("$REGIONTYPE", "mountainous region"); break;
-                    case RegionType.Plain: result = result.Replace("$REGIONTYPE", "grassy plain"); break;
-                    case RegionType.Sea: result = result.Replace("$REGIONTYPE", "sea"); break;
-                    default: result = result.Replace("$REGIONTYPE", "unknown region"); break;
-                }
+                result = ReplaceRegionData(region, result);
+            }
 
+            if (character != null)
+            {
+                result = ReplaceCharacterData(character, result);
+            }
+
+            return result;
+        }
+
+        private static string ReplaceCharacterData(Character character, string result)
+        {
+            result = result.Replace("$NAME", character.Name);
+
+            if (character.Sex == Sex.Male)
+            {
+                result = result.Replace("$SEXPRONOUN", "he");
+                result = result.Replace("$SEX", "gentleman");
+            }
+            else
+            {
+                result = result.Replace("$SEXPRONOUN", "she");
+                result = result.Replace("$SEX", "young lady");
+            }
+
+            return result;
+        }
+
+        private static string ReplaceRegionData(Region region, string result)
+        {
+            if(region.Name != null)
+                result = result.Replace("$REGIONNAME", region.Name);
+
+            
+            switch (region.Type)
+            {
+                case RegionType.Desert: result = result.Replace("$REGIONTYPE", "desert region"); break;
+                case RegionType.Mountain: result = result.Replace("$REGIONTYPE", "mountainous region"); break;
+                case RegionType.Plain: result = result.Replace("$REGIONTYPE", "verdant plain"); break;
+                case RegionType.Sea: result = result.Replace("$REGIONTYPE", "sea"); break;
+                default: result = result.Replace("$REGIONTYPE", "unknown region"); break;
+            }
+
+            
+            if (region.GetCentralCase() != null)
+            {
                 result = result.Replace("$REGIONCOORDINATE", $"[{region.GetCentralCase().Location.XPosition};{region.GetCentralCase().Location.YPosition}]");
 
-                if(region.GetCentralCase().IsAvailable && region.GetCentralCase().IsBuildable())
+                if (region.GetCentralCase().IsAvailable && region.GetCentralCase().IsBuildable())
                     result = result.Replace("$REGIONAVAILABLE", "currently without inhabitants but ready to welcome a new village");
                 else if (region.GetCentralCase().IsAvailable && !region.GetCentralCase().IsBuildable())
                     result = result.Replace("$REGIONAVAILABLE", "currently without inhabitants and will remain so due to the difficult living conditions there");
                 else
                     result = result.Replace("$REGIONAVAILABLE", "currently governed by a village where inhabitants lead peaceful lives");
             }
-
-            if (character != null)
-            {
-                result = result.Replace("$NAME", character.Name);
-
-                if (character.Sex == Sex.Male)
-                {
-                    result = result.Replace("$SEXPRONOUN", "he");
-                    result = result.Replace("$SEX", "gentleman");
-                }
-                else
-                {
-                    result = result.Replace("$SEXPRONOUN", "she");
-                    result = result.Replace("$SEX", "young lady");
-                }
-            }
-
+            
+            
             return result;
         }
     }

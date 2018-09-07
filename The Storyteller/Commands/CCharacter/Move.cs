@@ -3,12 +3,9 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Interactivity;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using The_Storyteller.Entities;
+using The_Storyteller.Entities.Tools;
 using The_Storyteller.Models.MMap;
 
 namespace The_Storyteller.Commands.CCharacter
@@ -38,23 +35,68 @@ namespace The_Storyteller.Commands.CCharacter
                     var msgDirection = await interactivity.WaitForMessageAsync(xm => xm.Author.Id == ctx.User.Id 
                     && xm.ChannelId == ctx.Channel.Id, TimeSpan.FromMinutes(1));
 
-                    if (msgDirection != null && !msgDirection.Message.Content.StartsWith('!')) direction = msgDirection.Message.Content;
+                    if (msgDirection != null)
+                    {
+                        //If response is a new command, stop this one
+                        if (msgDirection.Message.Content.StartsWith(Config.Instance.Prefix)) return;
+                        direction = msgDirection.Message.Content;
+                    }
                 } while (!IsDirectionOK(direction));
             }
 
             var character = dep.Entities.Characters.GetCharacterById(ctx.Member.Id);
             var newLocation = GetNewLocation(direction, character.Location);
-
-            if(dep.Entities.Map.GetRegionByLocation(newLocation) == null)
+            if (dep.Entities.Map.GetRegionByLocation(newLocation) == null)
             {
-                await ctx.RespondAsync("new region in " + newLocation.ToString());
+                //Generate new region
+                var r = new Region
+                {
+                    Type = dep.Entities.Map.GetRandomRegionType()
+                };
+
+                var embedChooseName = dep.Embed.createEmbed(dep.Resources.GetString("introductionChooseName", region: r));
+                await ctx.RespondAsync(embed: embedChooseName);
+                var regionName = "";
+                var nameValid = false;
+
+                do
+                {
+                    var msgGuildName = await interactivity.WaitForMessageAsync(
+                        xm => xm.Author.Id == ctx.User.Id && xm.ChannelId == ctx.Channel.Id, TimeSpan.FromMinutes(1));
+                    if (msgGuildName != null)
+                    {
+                        //If response is a new command, stop this one
+                        if (msgGuildName.Message.Content.StartsWith(Config.Instance.Prefix)) return;
+                        regionName = msgGuildName.Message.Content;
+                    }
+
+                    if (!dep.Entities.Map.IsRegionNameTaken(regionName) && regionName.Length > 3 && regionName.Length <= 50)
+                        nameValid = true;
+                    else
+                    {
+                        var embed = dep.Embed.createEmbed(dep.Resources.GetString("regionNameTaken"));
+                        await ctx.RespondAsync(embed: embed);
+                    }
+                } while (!nameValid);
+                r = dep.Entities.Map.GenerateNewRegion(9, ctx.Guild.Id, regionName, r.Type, true);
+            }
+
+            //Check if its work + show current region
+
+            if(dep.Entities.Map.GetRegionByLocation(newLocation).GetCase(newLocation).Type == CaseType.Water)
+            {
+                //Can' move here
+                var embed = dep.Embed.createEmbed(dep.Resources.GetString("errorDirectionWater"));
+                await ctx.RespondAsync("impossible, case type eau");
+                return;
             }
             else
             {
-                await ctx.RespondAsync("moving " + character.Name + " to " + newLocation.ToString());
+                await ctx.RespondAsync($"new position : {newLocation} | case type : {dep.Entities.Map.GetRegionByLocation(newLocation).GetCase(newLocation).Type}");
+                character.Location = newLocation;
             }
 
-            character.Location = newLocation;
+            
         }
 
         private bool IsDirectionOK(string direction)
@@ -68,18 +110,19 @@ namespace The_Storyteller.Commands.CCharacter
 
         private Location GetNewLocation(string direction, Location currentLocation)
         {
+            var newLoc = new Location(currentLocation);
             switch (direction)
             {
-                case "north": currentLocation.YPosition += 1; break;
-                case "n": currentLocation.YPosition += 1; break;
-                case "south": currentLocation.YPosition -= 1; break;
-                case "s": currentLocation.YPosition -= 1; break;
-                case "east": currentLocation.XPosition += 1; break;
-                case "e": currentLocation.XPosition += 1; break;
-                case "west": currentLocation.XPosition -= 1; break;
-                case "w": currentLocation.XPosition -= 1; break;
+                case "north": newLoc.YPosition += 1; break;
+                case "n": newLoc.YPosition += 1; break;
+                case "south": newLoc.YPosition -= 1; break;
+                case "s": newLoc.YPosition -= 1; break;
+                case "east": newLoc.XPosition += 1; break;
+                case "e": newLoc.XPosition += 1; break;
+                case "west": newLoc.XPosition -= 1; break;
+                case "w": newLoc.XPosition -= 1; break;
             }
-            return currentLocation;
+            return newLoc;
         }
     }
 }

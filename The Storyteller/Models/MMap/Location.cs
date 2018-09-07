@@ -14,6 +14,12 @@ namespace The_Storyteller.Models.MMap
             YPosition = yPos;
         }
 
+        public Location(Location loc)
+        {
+            XPosition = loc.XPosition;
+            YPosition = loc.YPosition;
+        }
+
         public int XPosition { get; set; }
         public int YPosition { get; set; }
 
@@ -22,9 +28,8 @@ namespace The_Storyteller.Models.MMap
             return $"[{XPosition};{YPosition}]";
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Location loc)
         {
-            var loc = (Location)obj;
             if (loc == null) return false;
             if (loc.XPosition != XPosition) return false;
             if (loc.YPosition != YPosition) return false;

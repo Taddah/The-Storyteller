@@ -22,25 +22,24 @@ namespace The_Storyteller
         private readonly EntityManager _entityManager;
         private readonly Resources _res;
         private CommandsNextModule _cnext;
-        private Config _config;
         private InteractivityModule _interactivity;
 
         public TheStoryteller()
         {
             if (!File.Exists("config.json"))
             {
-                new Config().SaveToFile("config.json");
+                Config.Instance.SaveToFile("config.json");
                 Console.WriteLine("config file is empty");
                 Environment.Exit(0);
             }
 
-            _config = Config.LoadFromFile("config.json");
+            Config.Instance.LoadFromFile("config.json");
             _client = new DiscordClient(new DiscordConfiguration
             {
                 AutoReconnect = true,
                 EnableCompression = true,
                 LogLevel = LogLevel.Debug,
-                Token = _config.Token,
+                Token = Config.Instance.Token,
                 TokenType = TokenType.Bot,
                 UseInternalLogHandler = true
             });
@@ -76,9 +75,9 @@ namespace The_Storyteller
             {
                 CaseSensitive = false,
                 EnableDefaultHelp = false,
-                EnableDms = false,
+                EnableDms = true,
                 EnableMentionPrefix = true,
-                StringPrefix = _config.Prefix,
+                StringPrefix = Config.Instance.Prefix,
                 IgnoreExtraArguments = true,
                 Dependencies = dep
             });
@@ -108,7 +107,6 @@ namespace The_Storyteller
             _client.Dispose();
             _interactivity = null;
             _cnext = null;
-            _config = null;
         }
 
         public async Task RunAsync()
