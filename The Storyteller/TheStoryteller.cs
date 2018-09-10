@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Entities;
+using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
 using The_Storyteller.Commands;
@@ -132,7 +133,17 @@ namespace The_Storyteller
             e.Client.DebugLogger.LogMessage(LogLevel.Info, "The Storyteller", $"New Guild: {e.Guild.Name}",
                 DateTime.Now);
 
-            var embed = _embed.createEmbed(_res.GetString("introduction"), _res.GetString("introductionTypeGen"), true);
+            var embed = new DiscordEmbedBuilder()
+            {
+                Description = _res.GetString("introduction"),
+                Footer = new DiscordEmbedBuilder.EmbedFooter
+                {
+                    Text = _res.GetString("introductionTypeGen")
+                },
+                ImageUrl = "https://s33.postimg.cc/h0wkmhnm7/153046781869422717_1.png",
+                Color = Config.Instance.Color
+            };
+                
             await e.Guild.GetDefaultChannel().SendMessageAsync(embed: embed);
         }
 

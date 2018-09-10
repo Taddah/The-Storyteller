@@ -61,7 +61,7 @@ namespace The_Storyteller.Entities.Game
 
         public void AddCharacter(Character c)
         {
-            if (!IsPresent(c.Id))
+            if (!IsPresent(c.DiscordID))
             {
                 _characters.Add(c);
                 StartAsyncSave();
@@ -70,9 +70,9 @@ namespace The_Storyteller.Entities.Game
 
         public void EditCharacter(Character c)
         {
-            if (IsPresent(c.Id))
+            if (IsPresent(c.DiscordID))
             {
-                var oldC = GetCharacterById(c.Id);
+                var oldC = GetCharacterById(c.DiscordID);
                 oldC = c;
                 StartAsyncSave();
             }
@@ -80,7 +80,7 @@ namespace The_Storyteller.Entities.Game
 
         public Character GetCharacterById(ulong id)
         {
-            return _characters.SingleOrDefault(x => x.Id == id);
+            return _characters.SingleOrDefault(x => x.DiscordID == id);
         }
 
         public Character GetCharacterByTrueName(string trueName)
@@ -90,12 +90,17 @@ namespace The_Storyteller.Entities.Game
 
         public bool IsPresent(ulong id)
         {
-            return _characters.Exists(x => x.Id == id);
+            return _characters.Exists(x => x.DiscordID == id);
         }
 
         public bool IsTrueNameTaken(string surname)
         {
             return _characters.Exists(c => c.TrueName.ToLower() == surname.ToLower());
+        }
+
+        public int GetCount()
+        {
+            return _characters.Count();
         }
     }
 }

@@ -36,11 +36,11 @@ namespace The_Storyteller.Commands.CGeneral
             //Starting to create the character
             var c = new Character
             {
-                Id = ctx.Member.Id
+                DiscordID = ctx.Member.Id
             };
 
             //1 Get truename
-            var embedTrueName = _dep.Embed.createEmbed(_dep.Resources.GetString("startIntroAskTruename", c),
+            var embedTrueName = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskTruename", c),
                 _dep.Resources.GetString("startIntroInfoTruename", c));
             await channel.SendMessageAsync(embed: embedTrueName);
             var trueNameIsValid = false;
@@ -60,14 +60,14 @@ namespace The_Storyteller.Commands.CGeneral
                     }
                     else
                     {
-                        var embedErrorTrueName = _dep.Embed.createEmbed(_dep.Resources.GetString("startIntroTrueTaken"));
+                        var embedErrorTrueName = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroTrueTaken"));
                         await channel.SendMessageAsync(embed: embedErrorTrueName);
                     }
                 }
             } while (!trueNameIsValid);
 
             //2 Get Name
-            var embedName = _dep.Embed.createEmbed(_dep.Resources.GetString("startIntroAskName"),
+            var embedName = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskName"),
                 _dep.Resources.GetString("startIntroInfoName"));
             await channel.SendMessageAsync(embed: embedName);
 
@@ -76,7 +76,7 @@ namespace The_Storyteller.Commands.CGeneral
             if (msgName != null) c.Name = msgName.Message.Content;
 
             //3 Get Sex
-            var embedSex = _dep.Embed.createEmbed(_dep.Resources.GetString("startIntroAskGender", c),
+            var embedSex = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskGender", c),
                 _dep.Resources.GetString("startIntroInfoGender"));
             await channel.SendMessageAsync(embed: embedSex);
 
@@ -90,7 +90,7 @@ namespace The_Storyteller.Commands.CGeneral
                 if (msgSex.Message.Content.ToLower() == "male") c.Sex = Sex.Male;
                 else c.Sex = Sex.Female;
 
-                var embedFinal = _dep.Embed.createEmbed(_dep.Resources.GetString("startIntroConclude", c));
+                var embedFinal = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroConclude", c));
                 await channel.SendMessageAsync(embed: embedFinal);
 
                 c.Level = 1;
@@ -105,6 +105,8 @@ namespace The_Storyteller.Commands.CGeneral
                     Agility = 1,
                     UpgradePoint = 0
                 };
+
+                c.Id = _dep.Entities.Characters.GetCount();
 
                 _dep.Entities.Characters.EditCharacter(c);
             }

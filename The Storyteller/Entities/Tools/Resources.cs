@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using The_Storyteller.Models;
@@ -19,7 +20,8 @@ namespace The_Storyteller.Entities.Tools
             }
         }
 
-        public string GetString(string resourceName, Character character = null, Region region = null)
+        public string GetString(string resourceName, Character character = null, 
+            Region region = null, Case mCase = null)
         {
             if (!text.TryGetValue(resourceName, out var result))
                 return "Something went wrong, I forgot what I had to say ...";
@@ -32,6 +34,26 @@ namespace The_Storyteller.Entities.Tools
             if (character != null)
             {
                 result = ReplaceCharacterData(character, result);
+            }
+
+            if(mCase != null)
+            {
+                result = ReplaceCaseData(mCase, result);
+            }
+
+            return result;
+        }
+
+        private string ReplaceCaseData(Case mCase, string result)
+        {
+            switch (mCase.Type)
+            {
+                case CaseType.Desert: result = result.Replace("$CASETYPE", "desert"); break;
+                case CaseType.Mountain: result = result.Replace("$CASETYPE", "mountainous"); break;
+                case CaseType.Land: result = result.Replace("$CASETYPE", "land"); break;
+                case CaseType.Forest: result = result.Replace("$CASETYPE", "forest"); break;
+                case CaseType.Water: result = result.Replace("$CASETYPE", "aquatic"); break;
+                default: result = result.Replace("$CASETYPE", "unknown"); break;
             }
 
             return result;

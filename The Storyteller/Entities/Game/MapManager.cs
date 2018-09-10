@@ -130,6 +130,15 @@ namespace The_Storyteller.Entities.Game
             }
             return null;
         }
+
+        public Case GetCase(Location l)
+        {
+            foreach (Region r in _regions)
+            {
+                if (r.GetCase(l) != null) return r.GetCase(l);
+            }
+            return null;
+        }
         
         public bool RegionExist(Location l)
         {

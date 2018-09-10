@@ -23,5 +23,7 @@
   "regionNameTaken": "This name is already taken or is too long/short, please choose another one",
   "regionDescription": "The $REGIONNAME region is a $REGIONTYPE located towards $REGIONCOORDINATE. It is $REGIONAVAILABLE.",
   "errorDirection": "The direction indicated is not correct, please choose between north(n), south(s), east(s) or west(w)",
-  "errorDirectionWater": "This location seems to be a large body of water, you can't move there right now"
+  "errorDirectionWater": "This location seems to be a large body of water, you can't move there right now",
+  "caseInfo": "You are currently in a $CASETYPE area. This location is located in the $REGIONNAME region.",
+  "caseInfoDetails": "To get more details about this location, type the command caseinfo"
 }

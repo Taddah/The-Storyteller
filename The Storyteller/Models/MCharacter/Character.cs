@@ -10,8 +10,8 @@ namespace The_Storyteller.Models.MCharacter
 
     internal class Character
     {
-
-        public ulong Id { get; set; }
+        public int Id { get; set; }
+        public ulong DiscordID { get; set; }
         public string Name { get; set; }
         public string TrueName { get; set; }
         public Sex Sex { get; set; }

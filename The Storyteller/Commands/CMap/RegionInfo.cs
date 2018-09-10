@@ -4,6 +4,9 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using The_Storyteller.Entities;
 using The_Storyteller.Models.MMap;
+using System.Drawing;
+using ImageMagick;
+using System.IO;
 
 namespace The_Storyteller.Commands.CMap
 {
@@ -19,6 +22,8 @@ namespace The_Storyteller.Commands.CMap
         [Command("regioninfo")]
         public async Task RegionInfoCommand(CommandContext ctx, params string[] name)
         {
+            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)) return;
+
             Region r;
 
             if (name.Length > 0)
@@ -36,7 +41,7 @@ namespace The_Storyteller.Commands.CMap
 
             if (r == null)
             {
-                await ctx.RespondAsync(embed: dep.Embed.createEmbed(dep.Resources.GetString("regionNotFound"),
+                await ctx.RespondAsync(embed: dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("regionNotFound"),
                     withPicture: true));
                 return;
             }
@@ -53,7 +58,7 @@ namespace The_Storyteller.Commands.CMap
             var desert = 0;
             var forest = 0;
 
-            foreach(Case c in r.GetAllCases())
+            foreach (Case c in r.GetAllCases())
             {
                 if (c.Type == CaseType.Desert) desert++;
                 if (c.Type == CaseType.Water) water++;
@@ -68,9 +73,12 @@ namespace The_Storyteller.Commands.CMap
             embed.AddField($"Desert:", $"{desert}");
             embed.AddField($"Moutain:", $"{mountain}");
 
-            embed = dep.Embed.createEmbed(dep.Resources.GetString("regionDescription", region: r));
+           embed = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("regionDescription", region: r));
 
-            await ctx.RespondAsync(embed: embed);
+           await ctx.RespondAsync(embed: embed);
+            
         }
+
+
     }
 }

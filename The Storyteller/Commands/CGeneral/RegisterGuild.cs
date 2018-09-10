@@ -44,7 +44,7 @@ namespace The_Storyteller.Commands.CGeneral
                     Type = RegionType.Plain
                 };
 
-                DSharpPlus.Entities.DiscordEmbedBuilder embedChooseName = dep.Embed.createEmbed(dep.Resources.GetString("introductionChooseName", region: r));
+                DSharpPlus.Entities.DiscordEmbedBuilder embedChooseName = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("introductionChooseName", region: r));
                 await ctx.RespondAsync(embed: embedChooseName);
 
                 do
@@ -63,7 +63,7 @@ namespace The_Storyteller.Commands.CGeneral
                     }
                     else
                     {
-                        DSharpPlus.Entities.DiscordEmbedBuilder embed = dep.Embed.createEmbed(dep.Resources.GetString("regionNameTaken"));
+                        DSharpPlus.Entities.DiscordEmbedBuilder embed = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("regionNameTaken"));
                         await ctx.RespondAsync(embed: embed);
                     }
                 } while (!nameValid);
@@ -83,7 +83,7 @@ namespace The_Storyteller.Commands.CGeneral
             };
             dep.Entities.Guilds.AddGuild(g);
 
-            DSharpPlus.Entities.DiscordEmbedBuilder embedEnd = dep.Embed.createEmbed(dep.Resources.GetString("introductionGenFinish", region: r),
+            DSharpPlus.Entities.DiscordEmbedBuilder embedEnd = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("introductionGenFinish", region: r),
                 dep.Resources.GetString("introTypeStart"), true);
 
             await ctx.RespondAsync(embed: embedEnd);
