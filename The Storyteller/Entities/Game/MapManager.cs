@@ -8,6 +8,7 @@ using CaseType = The_Storyteller.Models.MMap.CaseType;
 
 namespace The_Storyteller.Entities.Game
 {
+    public enum Direction { North, East, West, South, Unknown};
     internal class MapManager
     {
         private readonly string _filename;
@@ -58,7 +59,7 @@ namespace The_Storyteller.Entities.Game
             return (RegionType)valuesRegionType.GetValue(random.Next(valuesRegionType.Length));
         }
 
-        public Region GenerateNewRegion(int size, ulong id, string name, RegionType regionType, bool forceValable = false)
+        public Region GenerateNewRegion(int size, ulong id, string name, RegionType regionType, Location centralCase = null, bool forceValable = false)
         {
             var random = new Random();
             var r = new Region
@@ -70,7 +71,9 @@ namespace The_Storyteller.Entities.Game
 
             var values = Enum.GetValues(typeof(CaseType));
 
-            var centralCase = GetNextCentralCase();
+            if(centralCase ==  null)
+                centralCase = GetNextCentralCase();
+
             var baseX = centralCase.XPosition - (int)Math.Floor(Convert.ToDecimal(size / 2));
             var endX = centralCase.XPosition + (int)Math.Floor(Convert.ToDecimal(size / 2));
             var baseY = centralCase.YPosition - (int)Math.Floor(Convert.ToDecimal(size / 2));
@@ -148,6 +151,40 @@ namespace The_Storyteller.Entities.Game
         public bool IsRegionNameTaken(string name)
         {
             return _regions.Exists(reg => reg.Name.ToLower() == name.ToLower());
+        }
+
+        public Location GetCentralCaseByDirection(Case centralCase, Direction direction)
+        {
+            if (_regions == null || _regions.Count == 0) return null;
+
+            switch (direction)
+            {
+                case Direction.North:
+                    return new Location()
+                    {
+                        XPosition = centralCase.Location.XPosition,
+                        YPosition = centralCase.Location.YPosition + _regions[0].GetSize()
+                    };
+                case Direction.South:
+                    return new Location()
+                    {
+                        XPosition = centralCase.Location.XPosition,
+                        YPosition = centralCase.Location.YPosition - _regions[0].GetSize()
+                    };
+                case Direction.East:
+                    return new Location()
+                    {
+                        XPosition = centralCase.Location.XPosition + _regions[0].GetSize(),
+                        YPosition = centralCase.Location.YPosition 
+                    };
+                case Direction.West:
+                    return new Location()
+                    {
+                        XPosition = centralCase.Location.XPosition - _regions[0].GetSize(),
+                        YPosition = centralCase.Location.YPosition
+                    };
+                default: return null;
+            }
         }
 
         public Location GetNextCentralCase()

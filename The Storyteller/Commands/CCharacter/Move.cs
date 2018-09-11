@@ -5,6 +5,7 @@ using DSharpPlus.Interactivity;
 using System;
 using System.Threading.Tasks;
 using The_Storyteller.Entities;
+using The_Storyteller.Entities.Game;
 using The_Storyteller.Entities.Tools;
 using The_Storyteller.Models.MMap;
 
@@ -26,7 +27,7 @@ namespace The_Storyteller.Commands.CCharacter
 
             var interactivity = ctx.Client.GetInteractivityModule();
 
-            if (!IsDirectionOK(direction))
+            if (GetDirection(direction) == Direction.Unknown)
             {
                 do
                 {
@@ -41,11 +42,13 @@ namespace The_Storyteller.Commands.CCharacter
                         if (msgDirection.Message.Content.StartsWith(Config.Instance.Prefix)) return;
                         direction = msgDirection.Message.Content;
                     }
-                } while (!IsDirectionOK(direction));
+                } while (GetDirection(direction) == Direction.Unknown);
             }
 
             var character = dep.Entities.Characters.GetCharacterById(ctx.Member.Id);
-            var newLocation = GetNewLocation(direction, character.Location);
+            var currentRegion = dep.Entities.Map.GetRegionByLocation(character.Location);
+            var newLocation = GetNewLocation(GetDirection(direction), character.Location);
+
             if (dep.Entities.Map.GetRegionByLocation(newLocation) == null)
             {
                 //Generate new region
@@ -78,10 +81,10 @@ namespace The_Storyteller.Commands.CCharacter
                         await ctx.RespondAsync(embed: embed);
                     }
                 } while (!nameValid);
-                r = dep.Entities.Map.GenerateNewRegion(9, ctx.Guild.Id, regionName, r.Type);
+                var nextMapLoc = dep.Entities.Map.GetCentralCaseByDirection(currentRegion.GetCentralCase(), GetDirection(direction));
+                r = dep.Entities.Map.GenerateNewRegion(9, ctx.Guild.Id, regionName, r.Type, nextMapLoc);
             }
-
-            //NOT WORKING
+            
 
             if(dep.Entities.Map.GetRegionByLocation(newLocation).GetCase(newLocation).Type == CaseType.Water)
             {
@@ -92,16 +95,16 @@ namespace The_Storyteller.Commands.CCharacter
             }
             else
             {
+                var newRegion = dep.Entities.Map.GetRegionByLocation(newLocation);
                 var lastCase = dep.Entities.Map.GetCase(character.Location);
-                var currentRegion = dep.Entities.Map.GetRegionByLocation(newLocation);
-                var newCase = currentRegion.GetCase(newLocation);
-
+                var newCase = newRegion.GetCase(newLocation);
+                
                 lastCase.RemoveCharacter(character);
                 newCase.AddNewCharacter(character);
 
                 character.Location = newLocation;
 
-                var embedCaseInfo = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("caseInfo", region: currentRegion, mCase: newCase), 
+                var embedCaseInfo = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("caseInfo", region: newRegion, mCase: newCase), 
                     dep.Resources.GetString("caseInfoDetails"));
 
                 await ctx.RespondAsync(embed: embedCaseInfo);
@@ -110,28 +113,24 @@ namespace The_Storyteller.Commands.CCharacter
             
         }
 
-        private bool IsDirectionOK(string direction)
+        private Direction GetDirection(string direction)
         {
-            if (direction.ToLower() == "north" || direction.ToLower() == "n") return true;
-            if (direction.ToLower() == "south" || direction.ToLower() == "s") return true;
-            if (direction.ToLower() == "east" || direction.ToLower() == "e") return true;
-            if (direction.ToLower() == "west" || direction.ToLower() == "w") return true;
-            return false;
+            if (direction.ToLower() == "north" || direction.ToLower() == "n") return Direction.North;
+            if (direction.ToLower() == "south" || direction.ToLower() == "s") return Direction.South;
+            if (direction.ToLower() == "east" || direction.ToLower() == "e") return Direction.East;
+            if (direction.ToLower() == "west" || direction.ToLower() == "w") return Direction.West;
+            return Direction.Unknown;
         }
 
-        private Location GetNewLocation(string direction, Location currentLocation)
+        private Location GetNewLocation(Direction direction, Location currentLocation)
         {
             var newLoc = new Location(currentLocation);
             switch (direction)
             {
-                case "north": newLoc.YPosition += 1; break;
-                case "n": newLoc.YPosition += 1; break;
-                case "south": newLoc.YPosition -= 1; break;
-                case "s": newLoc.YPosition -= 1; break;
-                case "east": newLoc.XPosition += 1; break;
-                case "e": newLoc.XPosition += 1; break;
-                case "west": newLoc.XPosition -= 1; break;
-                case "w": newLoc.XPosition -= 1; break;
+                case Direction.North: newLoc.YPosition += 1; break;
+                case Direction.South: newLoc.YPosition -= 1; break;
+                case Direction.East: newLoc.XPosition += 1; break;
+                case Direction.West: newLoc.XPosition -= 1; break;
             }
             return newLoc;
         }

@@ -67,7 +67,7 @@ namespace The_Storyteller.Commands.CGeneral
                         await ctx.RespondAsync(embed: embed);
                     }
                 } while (!nameValid);
-                r = dep.Entities.Map.GenerateNewRegion(9, ctx.Guild.Id, regionName, r.Type, true);
+                r = dep.Entities.Map.GenerateNewRegion(9, ctx.Guild.Id, regionName, r.Type, forceValable: true);
                 Console.WriteLine(r.Name);
             }
 
