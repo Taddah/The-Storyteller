@@ -49,9 +49,8 @@ namespace The_Storyteller.Commands.CGeneral
             };
 
             //1 On récupère le truename puis on enregistre directement pour éviter les doublons
-            DiscordEmbedBuilder embedTrueName = _dep.Embed.CreateEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskTruename"),
-                _dep.Resources.GetString("startIntroInfoTruename"));
-            Console.WriteLine(embedTrueName);
+            DiscordEmbedBuilder embedTrueName = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskTruename", c),
+                _dep.Resources.GetString("startIntroInfoTruename", c));
             await channel.SendMessageAsync(embed: embedTrueName);
             bool trueNameIsValid = false;
             do

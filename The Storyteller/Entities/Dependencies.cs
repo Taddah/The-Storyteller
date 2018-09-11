@@ -4,6 +4,10 @@ using The_Storyteller.Entities.Tools;
 
 namespace The_Storyteller.Entities
 {
+    /// <summary>
+    /// Dépendance injecté dans Commands accessible depuis toutes les commandes
+    /// Entities contient l'accès à tous les "Managers" (entité du jeu)
+    /// </summary>
     internal class Dependencies
     {
         internal InteractivityModule Interactivity { get; set; }

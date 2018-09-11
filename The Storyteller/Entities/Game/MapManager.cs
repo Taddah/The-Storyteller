@@ -9,6 +9,14 @@ using CaseType = The_Storyteller.Models.MMap.CaseType;
 namespace The_Storyteller.Entities.Game
 {
     public enum Direction { North, East, West, South, Unknown};
+
+    /// <summary>
+    /// Gère la map en général (sauvegardé dans un json)
+    /// La map est composé de région
+    /// Chaque région est composé de 9x9 cases
+    /// Une région peut-être habitable ou non
+    /// Cette classe permet de générer une nouvelle région
+    /// </summary>
     internal class MapManager
     {
         private readonly string _filename;
@@ -72,7 +80,7 @@ namespace The_Storyteller.Entities.Game
             var values = Enum.GetValues(typeof(CaseType));
 
             if(centralCase ==  null)
-                centralCase = GetNextCentralCase();
+                centralCase = GetRandomNextCentralCase();
 
             var baseX = centralCase.XPosition - (int)Math.Floor(Convert.ToDecimal(size / 2));
             var endX = centralCase.XPosition + (int)Math.Floor(Convert.ToDecimal(size / 2));
@@ -153,6 +161,13 @@ namespace The_Storyteller.Entities.Game
             return _regions.Exists(reg => reg.Name.ToLower() == name.ToLower());
         }
 
+        /// <summary>
+        /// Récupère la case central à côté de celle fourni en paramètre en fonction de 
+        /// la direction demandé"
+        /// </summary>
+        /// <param name="centralCase"></param>
+        /// <param name="direction"></param>
+        /// <returns></returns>
         public Location GetCentralCaseByDirection(Case centralCase, Direction direction)
         {
             if (_regions == null || _regions.Count == 0) return null;
@@ -187,7 +202,13 @@ namespace The_Storyteller.Entities.Game
             }
         }
 
-        public Location GetNextCentralCase()
+        /// <summary>
+        /// Retourne une case centrale au hasard pour générer une nouvelle région
+        /// à partir de cette case
+        /// Cette case central sera situé à côté d'une déjà existante
+        /// </summary>
+        /// <returns></returns>
+        public Location GetRandomNextCentralCase()
         {
             var locationFound = false;
             var nextLocation = new Location(0, 0);
@@ -200,7 +221,7 @@ namespace The_Storyteller.Entities.Game
                 var region = _regions[rand.Next(0, _regions.Count - 1)];
                 var locRegion = region.GetCentralCase().Location;
 
-                //Choose one direction randomly
+                //Choix d'une direction aléatoire
                 switch(rand.Next(0, 4))
                 {
                     //South

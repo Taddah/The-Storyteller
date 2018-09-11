@@ -17,6 +17,8 @@ namespace The_Storyteller.Models.MMap
         public Location Location { get; set; }
         public CaseType Type { get; set; }
         public bool IsAvailable { get; set; }
+
+        //Character présent sur la map
         public List<Character> CharacterPresent { get; set; }
 
         public Case()
@@ -24,6 +26,10 @@ namespace The_Storyteller.Models.MMap
             CharacterPresent = new List<Character>();
         }
 
+        /// <summary>
+        /// Case constructible pour un village
+        /// </summary>
+        /// <returns></returns>
         public bool IsBuildable()
         {
             if (Type == CaseType.Mountain

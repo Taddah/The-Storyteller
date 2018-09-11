@@ -5,6 +5,10 @@ using The_Storyteller.Models;
 
 namespace The_Storyteller.Entities.Game
 {
+    /// <summary>
+    /// Gère les serveurs discord
+    /// Sauvegardé dans un json à chaque ajout
+    /// </summary>
     internal class GuildManager
     {
         private readonly string _filename;

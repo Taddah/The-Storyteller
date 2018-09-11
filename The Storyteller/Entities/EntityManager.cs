@@ -2,6 +2,10 @@
 
 namespace The_Storyteller.Entities
 {
+    /// <summary>
+    /// Strategy
+    /// Regroupe les entités du jeu (Character, Guild, Map, Village, ...)
+    /// </summary>
     internal class EntityManager
     {
         public EntityManager()

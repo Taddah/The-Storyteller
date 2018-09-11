@@ -4,6 +4,10 @@ using Newtonsoft.Json;
 
 namespace The_Storyteller.Entities.Tools
 {
+    /// <summary>
+    /// Classe config général du bot (token, prefix de commande, couleur des embeds ..)
+    /// Accessible via Singleton
+    /// </summary>
     internal class Config
     {
         [JsonProperty("color")] private readonly string _color = "";
