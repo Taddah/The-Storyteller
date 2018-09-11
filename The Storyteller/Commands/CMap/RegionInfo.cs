@@ -4,12 +4,12 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using The_Storyteller.Entities;
 using The_Storyteller.Models.MMap;
-using System.Drawing;
-using ImageMagick;
-using System.IO;
 
 namespace The_Storyteller.Commands.CMap
 {
+    /// <summary>
+    /// Commande qui retourne des informations sur sur une région
+    /// </summary>
     internal class RegionInfo
     {
         private readonly Dependencies dep;
@@ -35,7 +35,7 @@ namespace The_Storyteller.Commands.CMap
             }
             else
             {
-                var userLoc = dep.Entities.Characters.GetCharacterById(ctx.Member.Id).Location;
+                var userLoc = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id).Location;
                 r = dep.Entities.Map.GetRegionByLocation(userLoc);
             }
 

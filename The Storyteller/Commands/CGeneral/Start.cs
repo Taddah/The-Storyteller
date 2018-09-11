@@ -1,13 +1,19 @@
-﻿using System;
-using System.Threading.Tasks;
-using DSharpPlus.CommandsNext;
+﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
+using System;
+using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Models.MCharacter;
 
 namespace The_Storyteller.Commands.CGeneral
 {
+    /// <summary>
+    /// Commande pour créer un nouveau Character
+    /// Celui ci sera placé sur la région associé au discord où
+    /// cette commande est exécutée
+    /// </summary>
     internal class Start
     {
         private readonly Dependencies _dep;
@@ -20,33 +26,36 @@ namespace The_Storyteller.Commands.CGeneral
         [Command("start")]
         public async Task StartCommand(CommandContext ctx)
         {
+            //Vérification de base
             if (_dep.Entities.Characters.IsPresent(ctx.Member.Id))
             {
                 await ctx.RespondAsync(_dep.Resources.GetString("errorAlreadyRegistered"));
                 return;
             }
+            if (!_dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
+            {
+                return;
+            }
 
-            if (!_dep.Entities.Guilds.IsPresent(ctx.Guild.Id)) return;
+            InteractivityModule interactivity = ctx.Client.GetInteractivityModule();
 
-            var interactivity = ctx.Client.GetInteractivityModule();
+            //Créer Direct Channel (MP)
+            DiscordDmChannel channel = await ctx.Member.CreateDmChannelAsync();
 
-            //Create DM
-            var channel = await ctx.Member.CreateDmChannelAsync();
-
-            //Starting to create the character
-            var c = new Character
+            //Création du Character
+            Character c = new Character
             {
                 DiscordID = ctx.Member.Id
             };
 
-            //1 Get truename
-            var embedTrueName = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskTruename", c),
+            //1 On récupère le truename puis on enregistre directement pour éviter les doublons
+            DiscordEmbedBuilder embedTrueName = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskTruename", c),
                 _dep.Resources.GetString("startIntroInfoTruename", c));
             await channel.SendMessageAsync(embed: embedTrueName);
-            var trueNameIsValid = false;
+            bool trueNameIsValid = false;
             do
             {
-                var msgTrueName = await interactivity.WaitForMessageAsync(
+                MessageContext msgTrueName = await interactivity.WaitForMessageAsync(
                     xm => xm.Author.Id == ctx.User.Id && xm.ChannelId == channel.Id, TimeSpan.FromMinutes(1));
                 if (msgTrueName != null)
                 {
@@ -60,37 +69,51 @@ namespace The_Storyteller.Commands.CGeneral
                     }
                     else
                     {
-                        var embedErrorTrueName = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroTrueTaken"));
+                        DiscordEmbedBuilder embedErrorTrueName = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroTrueTaken"));
                         await channel.SendMessageAsync(embed: embedErrorTrueName);
                     }
                 }
             } while (!trueNameIsValid);
 
-            //2 Get Name
-            var embedName = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskName"),
+            //2 On demande le nom
+            DiscordEmbedBuilder embedName = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskName"),
                 _dep.Resources.GetString("startIntroInfoName"));
             await channel.SendMessageAsync(embed: embedName);
 
-            var msgName = await interactivity.WaitForMessageAsync(
+            MessageContext msgName = await interactivity.WaitForMessageAsync(
                 xm => xm.Author.Id == ctx.User.Id && xm.ChannelId == channel.Id, TimeSpan.FromMinutes(1));
-            if (msgName != null) c.Name = msgName.Message.Content;
+            if (msgName != null)
+            {
+                c.Name = msgName.Message.Content;
+            }
 
-            //3 Get Sex
-            var embedSex = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskGender", c),
+            //3 Puis finalement le sexe
+            DiscordEmbedBuilder embedSex = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskGender", c),
                 _dep.Resources.GetString("startIntroInfoGender"));
             await channel.SendMessageAsync(embed: embedSex);
 
-            var msgSex = await interactivity.WaitForMessageAsync(xm => xm.Author.Id == ctx.User.Id &&
+            MessageContext msgSex = await interactivity.WaitForMessageAsync(xm => xm.Author.Id == ctx.User.Id &&
                                                                        (xm.Content.ToLower() == "male" ||
                                                                         xm.Content.ToLower() == "female" &&
                                                                         xm.ChannelId == channel.Id),
-                TimeSpan.FromMinutes(1));
+                                                                        TimeSpan.FromMinutes(1));
             if (msgSex != null)
             {
-                if (msgSex.Message.Content.ToLower() == "male") c.Sex = Sex.Male;
-                else c.Sex = Sex.Female;
+                if (msgSex.Message.Content.ToLower() == "male")
+                {
+                    c.Sex = Sex.Male;
+                }
+                else
+                {
+                    c.Sex = Sex.Female;
+                }
+            }
+            else c.Sex = Sex.Male;
 
-                var embedFinal = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroConclude", c));
+            //Si le nom a bien été rentré, on créer le personnage
+            if(c.Name != null)
+            { 
+                DiscordEmbedBuilder embedFinal = _dep.Embed.createEmbed(ctx.Member, _dep.Resources.GetString("startIntroConclude", c));
                 await channel.SendMessageAsync(embed: embedFinal);
 
                 c.Level = 1;
@@ -107,8 +130,12 @@ namespace The_Storyteller.Commands.CGeneral
                 };
 
                 c.Id = _dep.Entities.Characters.GetCount();
-
                 _dep.Entities.Characters.EditCharacter(c);
+            }
+            //Sinon on supprime celui qui avait commencé à être créer
+            else
+            {
+                _dep.Entities.Characters.DeleteCharacter(c.DiscordID);
             }
         }
     }

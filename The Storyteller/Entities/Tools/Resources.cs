@@ -108,5 +108,19 @@ namespace The_Storyteller.Entities.Tools
             
             return result;
         }
+
+        /// <summary>
+        /// Enlève les charactères relatif au markdown sur le nom de région
+        /// </summary>
+        /// <param name="regionName"></param>
+        /// <returns></returns>
+        public string RemoveMarkdown(string regionName)
+        {
+            regionName = regionName.Replace("*", "");
+            regionName = regionName.Replace("`", "");
+            regionName = regionName.Replace("_", "");
+
+            return regionName;
+        }
     }
 }

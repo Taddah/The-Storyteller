@@ -1,15 +1,20 @@
-﻿using System.Threading.Tasks;
-using DSharpPlus.CommandsNext;
+﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.CommandsNext.Converters;
 using DSharpPlus.Entities;
+using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Entities.Tools;
-using The_Storyteller.Models;
 using The_Storyteller.Models.MCharacter;
 
 namespace The_Storyteller.Commands.CCharacter
 {
+    /// <summary>
+    /// Commande pour afficher les informations d'un Character
+    /// Paramètre possible : Mention (@user), TrueName ou ID
+    /// Si Mention ou ID, retourne détails basique
+    /// Si truename, retourne plus de détail
+    /// </summary>
     internal class CharacterInfo
     {
         private readonly Dependencies dep;
@@ -20,26 +25,32 @@ namespace The_Storyteller.Commands.CCharacter
         }
 
         [Command("info")]
-        public async Task CharacterInfoCommand(CommandContext ctx, [Description("The nickname to give to that user.")]
-            params string[] name)
+        public async Task CharacterInfoCommand(CommandContext ctx, params string[] name)
         {
-            var strName = "";
+            //Auteur pas inscrit,
+            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id))
+            {
+                return;
+            }
+
+            string strName = "";
             Character c;
+            DiscordMemberConverter dmc = new DiscordMemberConverter();
+            DiscordDmChannel channel = await ctx.Member.CreateDmChannelAsync();
 
-            var dmc = new DiscordMemberConverter();
-            var channel = await ctx.Member.CreateDmChannelAsync();
-
-
+            //Pas de paramètre, on retourne les informations de l'auteur
             if (name.Length == 0)
             {
-                c = dep.Entities.Characters.GetCharacterById(ctx.Member.Id);
+                c = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
                 await channel.SendMessageAsync(embed: GetPersonalInfo(c));
                 await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
                 return;
             }
 
+            //Nom sans espace, tester si trueName en premier
             if (name.Length == 1)
             {
+                //Recherche par truename
                 c = dep.Entities.Characters.GetCharacterByTrueName(name[0]);
                 if (c != null)
                 {
@@ -47,29 +58,44 @@ namespace The_Storyteller.Commands.CCharacter
                     await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
                     return;
                 }
-                else if (dmc.TryConvert(name[0], ctx, out var member))
+                else
                 {
-                    c = dep.Entities.Characters.GetCharacterById(member.Id);
-                    if (c == null)
+                    //Tester par ID
+                    if (int.TryParse(name[0], out int id))
                     {
-                        await ctx.RespondAsync(dep.Resources.GetString("errorCharacterUnknown"));
-                        return;
+                        c = dep.Entities.Characters.GetCharacterById(id);
                     }
+                    //Tester mention user
+                    else if (dmc.TryConvert(name[0], ctx, out DiscordMember member))
+                    {
+                        c = dep.Entities.Characters.GetCharacterByDiscordId(member.Id);
+                    }
+                }
 
-                    var embed = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("publicInfo", c),
-                        dep.Resources.GetString("needTrueName"));
+                //Trouvé, retourne info basique
+                if (c != null)
+                {
+                    DiscordEmbedBuilder embed = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("publicInfo", c),
+                    dep.Resources.GetString("needTrueName"));
                     await channel.SendMessageAsync(embed: embed);
                     await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
                     return;
                 }
+                else
+                {
+                    await ctx.RespondAsync(dep.Resources.GetString("errorCharacterUnknown"));
+                    return;
+                }
+            }
 
-               
-            }
-            else
+            //Reconstruction du nom
+            foreach (string s in name)
             {
-                foreach (var s in name) strName += s + " ";
-                strName = strName.Remove(strName.Length-1);
+                strName += s + " ";
             }
+
+            strName = strName.Remove(strName.Length - 1);
+
 
             c = dep.Entities.Characters.GetCharacterByTrueName(strName);
             if (c != null)
@@ -84,10 +110,10 @@ namespace The_Storyteller.Commands.CCharacter
 
         public DiscordEmbedBuilder GetPersonalInfo(Character c)
         {
-            var embed = new DiscordEmbedBuilder
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder
             {
                 Title = $"{c.Name} **{c.TrueName}**",
-                Description = $"Energy : {c.Energy}/{c.MaxEnergy}",
+                Description = $"Energy : {c.Energy}/{c.MaxEnergy}, ID : {c.Id}",
                 Color = Config.Instance.Color,
                 Footer = new DiscordEmbedBuilder.EmbedFooter
                 {
@@ -110,10 +136,10 @@ namespace The_Storyteller.Commands.CCharacter
 
         public DiscordEmbedBuilder GetDetailledInfo(Character c)
         {
-            var embed = new DiscordEmbedBuilder
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder
             {
                 Title = $"{c.Name} **{c.TrueName}**",
-                Description = $"Level: {c.Level}",
+                Description = $"Level: {c.Level}, ID : {c.Id}",
                 Color = Config.Instance.Color,
                 Footer = new DiscordEmbedBuilder.EmbedFooter
                 {

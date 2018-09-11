@@ -72,15 +72,20 @@ namespace The_Storyteller.Entities.Game
         {
             if (IsPresent(c.DiscordID))
             {
-                var oldC = GetCharacterById(c.DiscordID);
+                var oldC = GetCharacterByDiscordId(c.DiscordID);
                 oldC = c;
                 StartAsyncSave();
             }
         }
 
-        public Character GetCharacterById(ulong id)
+        public Character GetCharacterByDiscordId(ulong discordId)
         {
-            return _characters.SingleOrDefault(x => x.DiscordID == id);
+            return _characters.SingleOrDefault(x => x.DiscordID == discordId);
+        }
+
+        public Character GetCharacterById(int id)
+        {
+            return _characters.SingleOrDefault(x => x.Id == id);
         }
 
         public Character GetCharacterByTrueName(string trueName)
@@ -101,6 +106,12 @@ namespace The_Storyteller.Entities.Game
         public int GetCount()
         {
             return _characters.Count();
+        }
+
+        public void DeleteCharacter(ulong discordId)
+        {
+            var delC = _characters.SingleOrDefault(c => c.DiscordID == discordId);
+            if (delC != null) _characters.Remove(delC);
         }
     }
 }

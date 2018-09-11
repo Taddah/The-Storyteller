@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using DSharpPlus;
@@ -85,6 +86,7 @@ namespace The_Storyteller
             
 
             _cnext.RegisterCommands<Test>();
+            
 
             /////////CHARACTER COMMANDS
             _cnext.RegisterCommands<Commands.CCharacter.CharacterInfo>();
