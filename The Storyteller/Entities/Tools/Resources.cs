@@ -26,6 +26,8 @@ namespace The_Storyteller.Entities.Tools
             if (!text.TryGetValue(resourceName, out var result))
                 return "Something went wrong, I forgot what I had to say ...";
 
+            Console.WriteLine(result);
+
             if (region != null)
             {
                 result = ReplaceRegionData(region, result);
@@ -73,6 +75,8 @@ namespace The_Storyteller.Entities.Tools
                 result = result.Replace("$SEXPRONOUN", "she");
                 result = result.Replace("$SEX", "young lady");
             }
+
+            result = result.Replace("$ORIGINREGIONNAME", character.OriginRegion.Name);
 
             return result;
         }

@@ -42,7 +42,7 @@ namespace The_Storyteller.Commands.CCharacter
             {
                 do
                 {
-                    DiscordEmbedBuilder embedErrorDirection = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("errorDirection"));
+                    DiscordEmbedBuilder embedErrorDirection = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("errorDirection"));
                     await ctx.RespondAsync(embed: embedErrorDirection);
                     MessageContext msgDirection = await interactivity.WaitForMessageAsync(xm => xm.Author.Id == ctx.User.Id
                     && xm.ChannelId == ctx.Channel.Id, TimeSpan.FromMinutes(1));
@@ -77,7 +77,7 @@ namespace The_Storyteller.Commands.CCharacter
                 };
 
                 //Choix du nom de la région, demander tant qu'il n'est pas valide
-                DiscordEmbedBuilder embedChooseName = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("introductionChooseName", region: r));
+                DiscordEmbedBuilder embedChooseName = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("introductionChooseName", region: r));
                 await ctx.RespondAsync(embed: embedChooseName);
                 string regionName = "";
                 bool nameValid = false;
@@ -108,7 +108,7 @@ namespace The_Storyteller.Commands.CCharacter
                     }
                     else
                     {
-                        DiscordEmbedBuilder embed = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("regionNameTaken"));
+                        DiscordEmbedBuilder embed = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("regionNameTaken"));
                         await ctx.RespondAsync(embed: embed);
                     }
                 } while (!nameValid);
@@ -122,7 +122,7 @@ namespace The_Storyteller.Commands.CCharacter
             //Eau, impossible d'y aller (pour le moment)
             if (dep.Entities.Map.GetRegionByLocation(newLocation).GetCase(newLocation).Type == CaseType.Water)
             {
-                DiscordEmbedBuilder embed = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("errorDirectionWater"));
+                DiscordEmbedBuilder embed = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("errorDirectionWater"));
                 await ctx.RespondAsync(embed: embed);
                 return;
             }
@@ -138,7 +138,7 @@ namespace The_Storyteller.Commands.CCharacter
 
                 character.Location = newLocation;
 
-                DiscordEmbedBuilder embedCaseInfo = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("caseInfo", region: newRegion, mCase: newCase),
+                DiscordEmbedBuilder embedCaseInfo = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("caseInfo", region: newRegion, mCase: newCase),
                      dep.Resources.GetString("caseInfoDetails"));
 
                 await ctx.RespondAsync(embed: embedCaseInfo);
