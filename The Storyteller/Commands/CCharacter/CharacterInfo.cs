@@ -75,7 +75,7 @@ namespace The_Storyteller.Commands.CCharacter
                 //Trouvé, retourne info basique
                 if (c != null)
                 {
-                    DiscordEmbedBuilder embed = dep.Embed.createEmbed(ctx.Member, dep.Resources.GetString("publicInfo", c),
+                    DiscordEmbedBuilder embed = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("publicInfo", c),
                     dep.Resources.GetString("needTrueName"));
                     await channel.SendMessageAsync(embed: embed);
                     await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");

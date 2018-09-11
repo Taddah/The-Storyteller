@@ -5,11 +5,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using The_Storyteller.Models;
 using The_Storyteller.Models.MCharacter;
 
 namespace The_Storyteller.Entities.Game
 {
+    /// <summary>
+    /// Gère les Character depuis une liste
+    /// Sauvegarde automatique dans un json toutes les 10 secondes
+    /// </summary>
     internal class CharacterManager
     {
         private readonly List<Character> _characters;
@@ -44,7 +47,7 @@ namespace The_Storyteller.Entities.Game
             }
         }
 
-        public async Task DoPeriodicCharacterSave()
+        private async Task DoPeriodicCharacterSave()
         {
             while (true)
             {

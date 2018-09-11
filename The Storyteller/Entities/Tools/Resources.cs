@@ -8,6 +8,9 @@ using The_Storyteller.Models.MMap;
 
 namespace The_Storyteller.Entities.Tools
 {
+    /// <summary>
+    /// Classe de ressource pour les strings
+    /// </summary>
     internal class Resources
     {
         private readonly Dictionary<string, string> text;
@@ -20,6 +23,15 @@ namespace The_Storyteller.Entities.Tools
             }
         }
 
+        /// <summary>
+        /// Récupère un string par son nom depuis le fichier json ou ils sont sauvegardé
+        /// Remplace les variables $NAME par la valeur à afficher
+        /// </summary>
+        /// <param name="resourceName">Nom du string à récupérer</param>
+        /// <param name="character">Optionnel. Pour afficher infos relative aux Character</param>
+        /// <param name="region">Optionnel. Pour afficher infos relative aux Region</param>
+        /// <param name="mCase">Optionnel. Pour afficher infos relative aux Case</param>
+        /// <returns></returns>
         public string GetString(string resourceName, Character character = null, 
             Region region = null, Case mCase = null)
         {
@@ -44,6 +56,12 @@ namespace The_Storyteller.Entities.Tools
             return result;
         }
 
+        /// <summary>
+        /// Remplace les données de type Case
+        /// </summary>
+        /// <param name="mCase"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
         private string ReplaceCaseData(Case mCase, string result)
         {
             switch (mCase.Type)
@@ -59,6 +77,12 @@ namespace The_Storyteller.Entities.Tools
             return result;
         }
 
+        /// <summary>
+        /// Remplace les données de type Character
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
         private static string ReplaceCharacterData(Character character, string result)
         {
             result = result.Replace("$NAME", character.Name);
@@ -77,6 +101,12 @@ namespace The_Storyteller.Entities.Tools
             return result;
         }
 
+        /// <summary>
+        /// Remplace les données de type Region
+        /// </summary>
+        /// <param name="region"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
         private static string ReplaceRegionData(Region region, string result)
         {
             if(region.Name != null)

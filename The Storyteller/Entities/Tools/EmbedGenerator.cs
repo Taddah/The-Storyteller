@@ -2,14 +2,27 @@
 
 namespace The_Storyteller.Entities.Tools
 {
+    /// <summary>
+    /// Classe de génération d'embed simplifié
+    /// </summary>
     internal class EmbedGenerator
     {
-        public DiscordEmbedBuilder createEmbed(DiscordMember memberTarget, string mainText, string optionalText = "", bool withPicture = false)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="memberTarget">Pour indiquer à qui est destiné l'embed</param>
+        /// <param name="mainText">Obligatoire. Texte principal de l'embed</param>
+        /// <param name="optionalText">Optionnel. Texte secondaire en footer</param>
+        /// <param name="withPicture">Optionnel. Affichage ou non de l'image du storyteller</param>
+        /// <returns></returns>
+        public DiscordEmbedBuilder CreateEmbed(DiscordMember memberTarget, string mainText, string optionalText = "", bool withPicture = false)
         {
-            var embed = new DiscordEmbedBuilder();
-            embed.Description = mainText;
-            embed.Color = Config.Instance.Color;
-            embed.Title = memberTarget.DisplayName;
+            var embed = new DiscordEmbedBuilder
+            {
+                Description = mainText,
+                Color = Config.Instance.Color,
+                Title = memberTarget.DisplayName
+            };
 
             if (optionalText.Length > 0)
                 embed.Footer = new DiscordEmbedBuilder.EmbedFooter

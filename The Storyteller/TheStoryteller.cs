@@ -59,6 +59,8 @@ namespace The_Storyteller
 
             _entityManager = new EntityManager();
 
+            //Création et ajout des dépendances accessibles depuis toutes les commandes 
+            //(voir les exemples)
             DependencyCollection dep = null;
             using (var d = new DependencyCollectionBuilder())
             {
@@ -147,15 +149,6 @@ namespace The_Storyteller
             };
                 
             await e.Guild.GetDefaultChannel().SendMessageAsync(embed: embed);
-        }
-
-        internal void WriteCenter(string value, int skipline = 0)
-        {
-            for (var i = 0; i < skipline; i++)
-                Console.WriteLine();
-
-            Console.SetCursorPosition((Console.WindowWidth - value.Length) / 2, Console.CursorTop);
-            Console.WriteLine(value);
         }
     }
 }
