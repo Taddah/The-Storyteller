@@ -23,7 +23,7 @@ namespace The_Storyteller.Models.MCharacter
         public CharacterInventory Inventory { get; set; }
         public Location Location { get; set; }
         public CharacterStats Stats { get; set; }
-        public Region OriginRegion { get; set; }
-        public Village Village { get; set; }
+        public string OriginRegionName { get; set; }
+        public string VillageName { get; set; }
     }
 }

@@ -3,8 +3,7 @@ using The_Storyteller.Models.MGameObject;
 
 namespace The_Storyteller.Models.MVillage
 {
-    class VillageInventory
+    class VillageInventory : Inventory
     {
-        public List<GameObject> GameObjects { get; set; }
     }
 }

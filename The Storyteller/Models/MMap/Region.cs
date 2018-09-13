@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using The_Storyteller.Models.MVillage;
 
 namespace The_Storyteller.Models.MMap
 {
@@ -53,6 +54,21 @@ namespace The_Storyteller.Models.MMap
                 return _cases[(int) Math.Floor((decimal) (GetSize() * GetSize()) / 2)];
 
             return null;
+        }
+
+        public int GetVillageId()
+        {
+            var res =  _cases.SingleOrDefault(c => c.VillageId >= 0);
+            if (res == null) return -1;
+            return res.VillageId;
+        }
+
+        public void SetVillageId(int villageId)
+        {
+            if(GetVillageId() == -1)
+            {
+                GetCentralCase().VillageId = villageId;
+            }
         }
     }
 }

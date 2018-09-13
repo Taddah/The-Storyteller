@@ -9,7 +9,7 @@ namespace The_Storyteller.Models
         public ulong Id { get; set; }
         public string Name { get; set; }
         public int MemberCount { get; set; }
-        public Region Region { get; set; }
+        public string RegionName { get; set; }
         public Location SpawnLocation { get; set; }
     }
 }

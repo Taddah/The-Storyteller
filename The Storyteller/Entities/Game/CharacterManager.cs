@@ -51,7 +51,15 @@ namespace The_Storyteller.Entities.Game
         {
             while (true)
             {
-                await SaveToFile();
+                try
+                {
+                    await SaveToFile();
+                }
+                catch(IOException)
+                {
+
+                }
+                
                 Thread.Sleep(TimeSpan.FromSeconds(10));
             }
         }

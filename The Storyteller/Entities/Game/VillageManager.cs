@@ -40,10 +40,18 @@ namespace The_Storyteller.Entities.Game
 
         private async Task SaveToFile()
         {
-            using (var sw = new StreamWriter(_filename))
+            try
             {
-                await sw.WriteAsync(JsonConvert.SerializeObject(_villages));
+                using (var sw = new StreamWriter(_filename))
+                {
+                    await sw.WriteAsync(JsonConvert.SerializeObject(_villages));
+                }
             }
+            catch (IOException)
+            {
+
+            }
+           
         }
 
         private async Task DoPeriodicCharacterSave()
@@ -57,11 +65,12 @@ namespace The_Storyteller.Entities.Game
 
         public void StartAsyncSave()
         {
+
             Task task = new Task(async () => await SaveToFile());
             task.Start();
         }
 
-        public void AddCharacter(Village v)
+        public void AddVillage(Village v)
         {
             if (!Exists(v.Id))
             {
@@ -70,7 +79,7 @@ namespace The_Storyteller.Entities.Game
             }
         }
 
-        public void EditCharacter(Village v)
+        public void EditVillage(Village v)
         {
             if (Exists(v.Id))
             {
@@ -89,5 +98,16 @@ namespace The_Storyteller.Entities.Game
         {
             return _villages.Exists(v => v.Id == id);
         }
+
+        public bool IsNameTaken(string name)
+        {
+            return _villages.Exists(v => v.Name == name);
+        }
+
+        public int GetVillageCount()
+        {
+            return _villages.Count;
+        }
+
     }
 }

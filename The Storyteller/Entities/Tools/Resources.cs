@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using The_Storyteller.Models;
 using The_Storyteller.Models.MCharacter;
 using The_Storyteller.Models.MMap;
+using The_Storyteller.Models.MVillage;
 
 namespace The_Storyteller.Entities.Tools
 {
@@ -33,12 +32,10 @@ namespace The_Storyteller.Entities.Tools
         /// <param name="mCase">Optionnel. Pour afficher infos relative aux Case</param>
         /// <returns></returns>
         public string GetString(string resourceName, Character character = null, 
-            Region region = null, Case mCase = null)
+            Region region = null, Case mCase = null, Village village = null)
         {
             if (!text.TryGetValue(resourceName, out var result))
                 return "Something went wrong, I forgot what I had to say ...";
-
-            Console.WriteLine(result);
 
             if (region != null)
             {
@@ -55,6 +52,11 @@ namespace The_Storyteller.Entities.Tools
                 result = ReplaceCaseData(mCase, result);
             }
 
+            if(village != null)
+            {
+                result = ReplaceVillageData(village, result);
+            }
+
             return result;
         }
 
@@ -68,12 +70,12 @@ namespace The_Storyteller.Entities.Tools
         {
             switch (mCase.Type)
             {
-                case CaseType.Desert: result = result.Replace("$CASETYPE", "desert"); break;
-                case CaseType.Mountain: result = result.Replace("$CASETYPE", "mountainous"); break;
-                case CaseType.Land: result = result.Replace("$CASETYPE", "land"); break;
-                case CaseType.Forest: result = result.Replace("$CASETYPE", "forest"); break;
-                case CaseType.Water: result = result.Replace("$CASETYPE", "aquatic"); break;
-                default: result = result.Replace("$CASETYPE", "unknown"); break;
+                case CaseType.Desert: result = result.Replace("$CASE_TYPE", "desert"); break;
+                case CaseType.Mountain: result = result.Replace("$CASE_TYPE", "mountainous"); break;
+                case CaseType.Land: result = result.Replace("$CASE_TYPE", "land"); break;
+                case CaseType.Forest: result = result.Replace("$CASE_TYPE", "forest"); break;
+                case CaseType.Water: result = result.Replace("$CASE_TYPE", "aquatic"); break;
+                default: result = result.Replace("$CASE_TYPE", "unknown"); break;
             }
 
             return result;
@@ -87,20 +89,19 @@ namespace The_Storyteller.Entities.Tools
         /// <returns></returns>
         private static string ReplaceCharacterData(Character character, string result)
         {
-            result = result.Replace("$NAME", character.Name);
+            if(character.Name != null)
+                result = result.Replace("$CHARACTER_NAME", character.Name);
 
             if (character.Sex == Sex.Male)
             {
-                result = result.Replace("$SEXPRONOUN", "he");
-                result = result.Replace("$SEX", "gentleman");
+                result = result.Replace("$CHARACTER_SEXPRONOUN", "he");
+                result = result.Replace("$CHARACTER_SEX", "gentleman");
             }
             else
             {
-                result = result.Replace("$SEXPRONOUN", "she");
-                result = result.Replace("$SEX", "young lady");
+                result = result.Replace("$CHARACTER_SEXPRONOUN", "she");
+                result = result.Replace("$CHARACTER_SEX", "young lady");
             }
-
-            result = result.Replace("$ORIGINREGIONNAME", character.OriginRegion.Name);
 
             return result;
         }
@@ -114,31 +115,45 @@ namespace The_Storyteller.Entities.Tools
         private static string ReplaceRegionData(Region region, string result)
         {
             if(region.Name != null)
-                result = result.Replace("$REGIONNAME", region.Name);
+                result = result.Replace("$REGION_NAME", region.Name);
 
             
             switch (region.Type)
             {
-                case RegionType.Desert: result = result.Replace("$REGIONTYPE", "desert region"); break;
-                case RegionType.Mountain: result = result.Replace("$REGIONTYPE", "mountainous region"); break;
-                case RegionType.Plain: result = result.Replace("$REGIONTYPE", "verdant plain"); break;
-                case RegionType.Sea: result = result.Replace("$REGIONTYPE", "sea"); break;
-                default: result = result.Replace("$REGIONTYPE", "unknown region"); break;
+                case RegionType.Desert: result = result.Replace("$REGION_TYPE", "desert region"); break;
+                case RegionType.Mountain: result = result.Replace("$REGION_TYPE", "mountainous region"); break;
+                case RegionType.Plain: result = result.Replace("$REGION_TYPE", "verdant plain"); break;
+                case RegionType.Sea: result = result.Replace("$REGION_TYPE", "sea"); break;
+                default: result = result.Replace("$REGION_TYPE", "unknown region"); break;
             }
 
             
             if (region.GetCentralCase() != null)
             {
-                result = result.Replace("$REGIONCOORDINATE", $"[{region.GetCentralCase().Location.XPosition};{region.GetCentralCase().Location.YPosition}]");
+                result = result.Replace("$REGION_COORDINATE", $"[{region.GetCentralCase().Location.XPosition};{region.GetCentralCase().Location.YPosition}]");
 
                 if (region.GetCentralCase().IsAvailable && region.GetCentralCase().IsBuildable())
-                    result = result.Replace("$REGIONAVAILABLE", "currently without inhabitants but ready to welcome a new village");
+                    result = result.Replace("$REGION_AVAILABLE", "currently without inhabitants but ready to welcome a new village");
                 else if (region.GetCentralCase().IsAvailable && !region.GetCentralCase().IsBuildable())
-                    result = result.Replace("$REGIONAVAILABLE", "currently without inhabitants and will remain so due to the difficult living conditions there");
+                    result = result.Replace("$REGION_AVAILABLE", "currently without inhabitants and will remain so due to the difficult living conditions there");
                 else
-                    result = result.Replace("$REGIONAVAILABLE", "currently governed by a village where inhabitants lead peaceful lives");
+                    result = result.Replace("$REGION_AVAILABLE", "currently governed by a village where inhabitants lead peaceful lives");
             }
             
+            
+            return result;
+        }
+
+        /// <summary>
+        /// Remplace les données de type Village
+        /// </summary>
+        /// <param name="village"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        private static string ReplaceVillageData(Village village, string result)
+        {
+            if (village.Name != null)
+                result = result.Replace("$VILLAGE_NAME", village.Name);
             
             return result;
         }

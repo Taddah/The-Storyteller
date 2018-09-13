@@ -88,7 +88,7 @@ namespace The_Storyteller.Commands.CCharacter
             }
 
             //3 Puis finalement le sexe
-            DiscordEmbedBuilder embedSex = _dep.Embed.CreateEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskGender", c),
+            DiscordEmbedBuilder embedSex = _dep.Embed.CreateEmbed(ctx.Member, _dep.Resources.GetString("startIntroAskGender"),
                 _dep.Resources.GetString("startIntroInfoGender"));
             await channel.SendMessageAsync(embed: embedSex);
 
@@ -131,8 +131,8 @@ namespace The_Storyteller.Commands.CCharacter
 
                 c.Inventory = new CharacterInventory();
                 c.Inventory.AddMoney(500);
-
-                c.OriginRegion = _dep.Entities.Map.GetRegionByLocation(_dep.Entities.Guilds.GetGuildById(ctx.Guild.Id).SpawnLocation);
+                
+                c.OriginRegionName = _dep.Entities.Map.GetRegionByLocation(_dep.Entities.Guilds.GetGuildById(ctx.Guild.Id).SpawnLocation).Name;
 
                 c.Id = _dep.Entities.Characters.GetCount();
                 _dep.Entities.Characters.EditCharacter(c);

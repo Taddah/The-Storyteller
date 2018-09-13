@@ -24,7 +24,7 @@ namespace The_Storyteller.Commands.CMap
         {
             if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)) return;
 
-
+            await ctx.RespondAsync("hey");
         }
     }
 }

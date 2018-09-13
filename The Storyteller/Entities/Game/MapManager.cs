@@ -94,7 +94,8 @@ namespace The_Storyteller.Entities.Game
                     var c = new Case
                     {
                         Location = new Location(i, j),
-                        IsAvailable = true
+                        IsAvailable = true,
+                        VillageId = -1
                     };
 
                     if (r.Type == RegionType.Sea) c.Type = CaseType.Water;

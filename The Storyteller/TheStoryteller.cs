@@ -96,11 +96,15 @@ namespace The_Storyteller
             _cnext.RegisterCommands<Commands.CCharacter.Start>();
 
 
-            /////////GENERAL COMMANDS
+            /////////GUILD COMMANDS
             _cnext.RegisterCommands<Commands.CGuild.RegisterGuild>();
 
             ////////MAP COMMANDS
             _cnext.RegisterCommands<Commands.CMap.RegionInfo>();
+
+
+            ////////VILLAGE COMMANDS
+            _cnext.RegisterCommands<Commands.CVillage.CreateVillage>();
             
 
             _client.Ready += OnReadyAsync;
