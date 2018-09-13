@@ -54,5 +54,10 @@ namespace The_Storyteller.Models.MGameObject
             if (_gameObjects.SingleOrDefault(item => item.Name == "money").Quantity >= quantityToRemove)
                 _gameObjects.SingleOrDefault(item => item.Name == "money").Quantity -= quantityToRemove;
         }
+
+        public List<GameObject> GetItems()
+        {
+            return _gameObjects.Where(item => item.Name != "money").ToList();
+        }
     }
 }

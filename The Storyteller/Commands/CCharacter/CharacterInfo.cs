@@ -42,7 +42,7 @@ namespace The_Storyteller.Commands.CCharacter
             if (name.Length == 0)
             {
                 c = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
-                await channel.SendMessageAsync(embed: GetPersonalInfo(c));
+                await channel.SendMessageAsync($"Type {Config.Instance.Prefix}inventory to show your inventory", embed: GetPersonalInfo(c));
                 await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
                 return;
             }

@@ -94,6 +94,7 @@ namespace The_Storyteller
             _cnext.RegisterCommands<Commands.CCharacter.CharacterInfo>();
             _cnext.RegisterCommands<Commands.CCharacter.Move>();
             _cnext.RegisterCommands<Commands.CCharacter.Start>();
+            _cnext.RegisterCommands<Commands.CCharacter.ShowInventory>();
 
 
             /////////GUILD COMMANDS
