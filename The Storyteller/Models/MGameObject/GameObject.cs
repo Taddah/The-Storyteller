@@ -10,5 +10,6 @@ namespace The_Storyteller.Models.MGameObject
     {
         public string Name { get; set; }
         public int Quantity { get; set; }
+        public int Value { get; set; }
 }
 }

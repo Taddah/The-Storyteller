@@ -24,7 +24,8 @@ namespace The_Storyteller.Models.MCharacter
                 _gameObjects.Add(new GameObject()
                 {
                     Name = "money",
-                    Quantity = 0
+                    Quantity = 0,
+                    Value = 1
                 });
 
             _gameObjects.SingleOrDefault(item => item.Name == "money").Quantity += quantityToAdd;
@@ -36,7 +37,8 @@ namespace The_Storyteller.Models.MCharacter
                 _gameObjects.Add(new GameObject()
                 {
                     Name = "money",
-                    Quantity = 0
+                    Quantity = 0,
+                    Value = 1
                 });
 
             if(_gameObjects.SingleOrDefault(item => item.Name == "money").Quantity >= quantityToRemove)
