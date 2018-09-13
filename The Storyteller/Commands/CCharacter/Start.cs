@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Models.MCharacter;
 
-namespace The_Storyteller.Commands.CGeneral
+namespace The_Storyteller.Commands.CCharacter
 {
     /// <summary>
     /// Commande pour créer un nouveau Character
@@ -129,10 +129,8 @@ namespace The_Storyteller.Commands.CGeneral
                     UpgradePoint = 0
                 };
 
-                c.Inventory = new CharacterInventory
-                {
-                    Money = 500
-                };
+                c.Inventory = new CharacterInventory();
+                c.Inventory.AddMoney(500);
 
                 c.OriginRegion = _dep.Entities.Map.GetRegionByLocation(_dep.Entities.Guilds.GetGuildById(ctx.Guild.Id).SpawnLocation);
 

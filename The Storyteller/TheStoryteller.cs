@@ -93,11 +93,11 @@ namespace The_Storyteller
             /////////CHARACTER COMMANDS
             _cnext.RegisterCommands<Commands.CCharacter.CharacterInfo>();
             _cnext.RegisterCommands<Commands.CCharacter.Move>();
+            _cnext.RegisterCommands<Commands.CCharacter.Start>();
 
 
             /////////GENERAL COMMANDS
-            _cnext.RegisterCommands<Commands.CGeneral.RegisterGuild>();
-            _cnext.RegisterCommands<Commands.CGeneral.Start>();
+            _cnext.RegisterCommands<Commands.CGuild.RegisterGuild>();
 
             ////////MAP COMMANDS
             _cnext.RegisterCommands<Commands.CMap.RegionInfo>();

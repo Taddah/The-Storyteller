@@ -10,7 +10,7 @@ using The_Storyteller.Entities.Tools;
 using The_Storyteller.Models;
 using The_Storyteller.Models.MMap;
 
-namespace The_Storyteller.Commands.CGeneral
+namespace The_Storyteller.Commands.CGuild
 {
     /// <summary>
     /// Commande pour rajouter un serveur disord au bot, nécessaire pour générer la map

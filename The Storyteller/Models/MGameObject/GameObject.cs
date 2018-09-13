@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace The_Storyteller.Models.MCharacter
+namespace The_Storyteller.Models.MGameObject
 {
     class GameObject
     {

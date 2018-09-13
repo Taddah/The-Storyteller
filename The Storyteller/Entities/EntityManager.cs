@@ -13,10 +13,12 @@ namespace The_Storyteller.Entities
             Guilds = new GuildManager("guilds.json");
             Characters = new CharacterManager("characters.json");
             Map = new MapManager("map.json");
+            Villages = new VillageManager("villages.json");
         }
 
         public CharacterManager Characters { get; set; }
         public GuildManager Guilds { get; set; }
         public MapManager Map { get; set; }
+        public VillageManager Villages { get; set; }
     }
 }
