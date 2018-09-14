@@ -28,6 +28,6 @@
   "caseInfoDetails": "To get more details about this location, type the command caseinfo",
   "createVillageAskName": "First of all, what will be the name of this village? It must be unique and simple enough to achieve the reputation it deserves and not to be forgotten!",
   "createVillageNoMoney": "I am sorry $CHARACTER_NAME but your current wealth is not large enough to start building a new young adventurer village. Try to convince comrades to join you in this adventure to raise the 500 Ecu needed",
-  "createVillageNotPossible": "Hey $CHARACTER_NAME, you can't build a village here! Another village is too close or the chosen place is not the most suitable to accommodate a whole population.",
+  "createVillageNotPossible": "Hey $CHARACTER_NAME, you can't build a village here! Another village is too close or you have to build in $REGION_COORDINATE to be able to accommodate a whole population.",
   "createVillageDone": "Congratulations $CHARACTER_NAME, the village of **$VILLAGE_NAME** has been created and you are now the mayor. Two basic buildings have been created there and are sufficient to accommodate a small population but a lot of work remains to be done!"
 }
