@@ -98,7 +98,7 @@ namespace The_Storyteller.Commands.CGuild
                 MemberCount = ctx.Guild.MemberCount,
                 Name = ctx.Guild.Name,
                 RegionName = r.Name,
-                SpawnLocation = new Location(0, 0)
+                SpawnLocation = r.GetCentralCase().Location
             };
             dep.Entities.Guilds.AddGuild(g);
 
