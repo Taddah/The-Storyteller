@@ -43,8 +43,12 @@ namespace The_Storyteller.Commands.CCharacter
             StringBuilder str = new StringBuilder();
             str.AppendLine("```ml");
 
-            foreach(GameObject go in inventory.GetItems())
-                str.AppendLine($"'{go.Name}' : {go.Quantity}");
+            for (int i = 0 ; i < inventory.GetItems().Count; i++)
+            {
+                var go = inventory.GetItems()[i];
+                str.AppendLine($"'{go.Name}' -  Quantity: {go.Quantity} - Id: {i+1}");
+            }
+                
 
             if(inventory.GetItems().Count == 0)
                 str.AppendLine("'Empty'");
