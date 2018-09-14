@@ -39,7 +39,7 @@ namespace The_Storyteller.Commands.CVillage
             if (region == null || region.GetVillageId() != -1 || !character.Location.Equals(region.GetCentralCase().Location))
             {
                 //Region n'appartient pas à un serveur, a déjà un village ou case pas adaptée, impossible de construire ici
-                DiscordEmbedBuilder embedNotPossible = _dep.Embed.CreateEmbed(ctx.Member, _dep.Resources.GetString("createVillageNotPossible", character: character));
+                DiscordEmbedBuilder embedNotPossible = _dep.Embed.CreateEmbed(ctx.Member, _dep.Resources.GetString("createVillageNotPossible", character: character, region: region));
                 await ctx.RespondAsync(embed: embedNotPossible);
                 return;
             }

@@ -53,7 +53,7 @@ namespace The_Storyteller.Entities.Game
             var sortedRegions = _regions.OrderBy(a => Guid.NewGuid()).ToList();
             foreach (Region r in sortedRegions)
             {
-                if (r.GetCentralCase().IsAvailable && r.GetCentralCase().IsBuildable())
+                if (r.GetCentralCase().IsAvailable && r.GetCentralCase().IsBuildable() && r.Id == 0)
                     return r;
             }
 

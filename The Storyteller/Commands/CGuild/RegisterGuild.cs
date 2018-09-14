@@ -50,7 +50,8 @@ namespace The_Storyteller.Commands.CGuild
             {
                 r = new Region
                 {
-                    Type = RegionType.Plain
+                    Type = RegionType.Plain,
+                    Id = ctx.Guild.Id
                 };
 
                 //Comme souvent, choix du nom et vérification
@@ -88,11 +89,9 @@ namespace The_Storyteller.Commands.CGuild
                     }
                 } while (!nameValid);
                 r = dep.Entities.Map.GenerateNewRegion(9, ctx.Guild.Id, regionName, r.Type, forceValable: true);
-                Console.WriteLine(r.Name);
             }
             
             //Enregistrement du serveur discord associé à sa région
-            r.Id = ctx.Guild.Id;
             Guild g = new Guild
             {
                 Id = ctx.Guild.Id,
