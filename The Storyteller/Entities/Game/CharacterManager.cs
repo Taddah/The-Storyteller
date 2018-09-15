@@ -104,6 +104,11 @@ namespace The_Storyteller.Entities.Game
             return _characters.SingleOrDefault(c => c.TrueName.ToLower() == trueName.ToLower());
         }
 
+        public Character GetCharacterByName(string name)
+        {
+            return _characters.SingleOrDefault(c => c.Name.ToLower() == name.ToLower());
+        }
+
         public bool IsPresent(ulong id)
         {
             return _characters.Exists(x => x.DiscordID == id);

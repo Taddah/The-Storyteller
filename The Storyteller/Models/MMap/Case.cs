@@ -21,11 +21,11 @@ namespace The_Storyteller.Models.MMap
         public int VillageId { get; set; }
 
         //Character présent sur la map
-        public List<Character> CharacterPresent { get; set; }
+        public List<ulong> CharacterPresent { get; set; }
 
         public Case()
         {
-            CharacterPresent = new List<Character>();
+            CharacterPresent = new List<ulong>();
         }
 
         /// <summary>
@@ -38,16 +38,18 @@ namespace The_Storyteller.Models.MMap
                 || Type == CaseType.Water
                 || Type == CaseType.Desert) return false;
 
+            if ((Location.XPosition + Location.YPosition) % 9 != 0) return false;
+
             return true;
         }
 
         public void AddNewCharacter(Character c)
         {
             if (CharacterPresent == null) return;
-            CharacterPresent.Add(c);
+            CharacterPresent.Add(c.DiscordID);
         }
 
-        public List<Character> GetCharactersOnCase()
+        public List<ulong> GetCharactersOnCase()
         {
             return this.CharacterPresent;
         }
@@ -55,7 +57,7 @@ namespace The_Storyteller.Models.MMap
         public void RemoveCharacter(Character c)
         {
             if (CharacterPresent == null) return;
-            CharacterPresent.Remove(c);
+            CharacterPresent.Remove(c.DiscordID);
         }
     }
 

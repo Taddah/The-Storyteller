@@ -71,6 +71,11 @@ namespace The_Storyteller.Commands.CCharacter
                     {
                         c = dep.Entities.Characters.GetCharacterByDiscordId(member.Id);
                     }
+                    //Tester par nom
+                    else
+                    {
+                        c = dep.Entities.Characters.GetCharacterByName(name[0]);
+                    }
                 }
 
                 //Trouvé, retourne info basique
@@ -98,11 +103,24 @@ namespace The_Storyteller.Commands.CCharacter
 
 
             c = dep.Entities.Characters.GetCharacterByTrueName(strName);
+            //truename
             if (c != null)
             {
                 await channel.SendMessageAsync(embed: GetDetailledInfo(c));
                 await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
                 return;
+            }
+            //Le nom
+            else
+            {
+                c = dep.Entities.Characters.GetCharacterByName(strName);
+                if(c != null)
+                {
+                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("publicInfo", c),
+                    dep.Resources.GetString("needTrueName"));
+                    await ctx.RespondAsync(embed: embed);
+                    return;
+                }
             }
 
             await ctx.RespondAsync(dep.Resources.GetString("errorCharacterUnknown"));

@@ -37,6 +37,8 @@ namespace The_Storyteller.Entities.Tools
             if (!text.TryGetValue(resourceName, out var result))
                 return "Something went wrong, I forgot what I had to say ...";
 
+            result = result.Replace("$PREFIX", Config.Instance.Prefix);
+
             if (region != null)
             {
                 result = ReplaceRegionData(region, result);
@@ -173,6 +175,8 @@ namespace The_Storyteller.Entities.Tools
             regionName = regionName.Replace("*", "");
             regionName = regionName.Replace("`", "");
             regionName = regionName.Replace("_", "");
+            regionName = regionName.Replace("/", "");
+            regionName = regionName.Replace("\\", "");
 
             return regionName;
         }

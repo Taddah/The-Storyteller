@@ -139,6 +139,7 @@ namespace The_Storyteller.Commands.CCharacter
                 c.OriginRegionName = _dep.Entities.Map.GetRegionByLocation(_dep.Entities.Guilds.GetGuildById(ctx.Guild.Id).SpawnLocation).Name;
 
                 c.Id = _dep.Entities.Characters.GetCount();
+                _dep.Entities.Map.GetCase(c.Location).AddNewCharacter(c);
                 _dep.Entities.Characters.EditCharacter(c);
             }
             //Sinon on supprime celui qui avait commencé à être créer

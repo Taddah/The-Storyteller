@@ -103,6 +103,7 @@ namespace The_Storyteller
 
             ////////MAP COMMANDS
             _cnext.RegisterCommands<Commands.CMap.RegionInfo>();
+            _cnext.RegisterCommands<Commands.CMap.CaseInfo>();
 
 
             ////////VILLAGE COMMANDS

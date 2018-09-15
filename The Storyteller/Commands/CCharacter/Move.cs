@@ -30,7 +30,9 @@ namespace The_Storyteller.Commands.CCharacter
         [Command("move")]
         public async Task MoveCommand(CommandContext ctx, string direction)
         {
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id))
+            //Vérification de base character + guild
+            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
+                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
