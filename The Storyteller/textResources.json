@@ -17,7 +17,7 @@
   "startIntroAskGender": "And to finish with this, what is your gender ?",
   "startIntroInfoGender": "Please type female or male",
   "startIntroConclude": "So then, $CHARACTER_NAME, here begins your adventure. I will now let you discover the world. Maybe we'll meet again soon!",
-  "publicInfo": "A mysterious $CHARACTER_SEX, I only know from this person that $CHARACTER_SEXPRONOUN comes from the region of XXXXXX",
+  "publicInfo": "A mysterious $CHARACTER_SEX, I only know from this person that $CHARACTER_SEXPRONOUN comes from the region of CHARACTER_ORIGINEREGION.",
   "needTrueName": "To obtain more details, knowledge of the real name is required",
   "regionNotFound": "I'm sorry, I don't know any region of that name... I still have so many places to explore.",
   "regionNameTaken": "This name is already taken or is too long/short, please choose another one",

@@ -2,6 +2,7 @@
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.CommandsNext.Converters;
 using DSharpPlus.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Entities.Tools;
@@ -42,7 +43,7 @@ namespace The_Storyteller.Commands.CCharacter
             if (name.Length == 0)
             {
                 c = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
-                await channel.SendMessageAsync($"Type {Config.Instance.Prefix}inventory to show your inventory", embed: GetPersonalInfo(c));
+                await channel.SendMessageAsync(embed: GetPersonalInfo(c));
                 await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
                 return;
             }
@@ -75,7 +76,7 @@ namespace The_Storyteller.Commands.CCharacter
                 //Trouvé, retourne info basique
                 if (c != null)
                 {
-                    DiscordEmbedBuilder embed = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("publicInfo", c),
+                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("publicInfo", c),
                     dep.Resources.GetString("needTrueName"));
                     await channel.SendMessageAsync(embed: embed);
                     await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
@@ -110,49 +111,96 @@ namespace The_Storyteller.Commands.CCharacter
 
         public DiscordEmbedBuilder GetPersonalInfo(Character c)
         {
-            DiscordEmbedBuilder embed = new DiscordEmbedBuilder
+            List<CustomEmbedField> attributes = new List<CustomEmbedField>
             {
-                Title = $"{c.Name} **{c.TrueName}**",
-                Description = $"Energy : {c.Energy}/{c.MaxEnergy}, ID : {c.Id}",
-                Color = Config.Instance.Color,
-                Footer = new DiscordEmbedBuilder.EmbedFooter
+
+                //1 Infos général du personnage
+                new CustomEmbedField()
                 {
-                    Text = $"Location : [{c.Location.XPosition}:{c.Location.YPosition}]"
+                    Name = "General informations",
+                    Attributes = new List<string>
+                    {
+                        "Name: " + c.Name,
+                        "TrueName: " + c.TrueName,
+                        "Sex: " + c.Sex,
+                        "Level: " + c.Level,
+                        "Experience: " + c.Experience + "/XXXXX",
+                        "Energy: " + c.Energy + "/" + c.MaxEnergy,
+                        "Location: " + c.Location,
+                        "Origin region: " + c.OriginRegionName
+                    }
                 },
-                ThumbnailUrl = "https://s33.postimg.cc/h0wkmhnm7/153046781869422717_1.png"
+                //2 Stats
+                new CustomEmbedField()
+                {
+                    Name = "Statistics",
+                    Attributes = new List<string>
+                    {
+                       "Health: " + c.Stats.Health +" / " + c.Stats.MaxHealth,
+                       "Strength: " + c.Stats.Strength,
+                       "Intelligence: " + c.Stats.Intelligence,
+                       "Dexterity: " + c.Stats.Dexterity,
+                       "Endurance: " + c.Stats.Endurance,
+                       "Agility: " + c.Stats.Agility,
+                       "Upgrade point available: " + c.Stats.UpgradePoint
+                    }
+                },
+                //3 Inventory ?
+                new CustomEmbedField()
+                {
+                    Name = "Inventory",
+                    Attributes = new List<string>
+                    {
+                        "Money: " + c.Inventory.GetMoney(),
+                        $"To view your inventory, type {Config.Instance.Prefix}inventory"
+                    }
+                }
             };
 
-            embed.AddField("Level", c.Level.ToString(), true);
-            embed.AddField("Experience", $"{c.Experience} / XXXXX", true);
-            embed.AddField("Endurance", c.Stats.Endurance.ToString(), true);
-            embed.AddField("Strength", c.Stats.Strength.ToString(), true);
-            embed.AddField("Intelligence", c.Stats.Intelligence.ToString(), true);
-            embed.AddField("Agility", c.Stats.Agility.ToString(), true);
-            embed.AddField("Dexterity", c.Stats.Dexterity.ToString(), true);
-            embed.AddField("Upgrade points", c.Stats.UpgradePoint.ToString(), true);
+            string title = "Informations";
+
+            DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes);
 
             return embed;
         }
 
         public DiscordEmbedBuilder GetDetailledInfo(Character c)
         {
-            DiscordEmbedBuilder embed = new DiscordEmbedBuilder
+            List<CustomEmbedField> attributes = new List<CustomEmbedField>
             {
-                Title = $"{c.Name} **{c.TrueName}**",
-                Description = $"Level: {c.Level}, ID : {c.Id}",
-                Color = Config.Instance.Color,
-                Footer = new DiscordEmbedBuilder.EmbedFooter
+                //1 Infos général du personnage
+                new CustomEmbedField()
                 {
-                    Text = $"Location : {dep.Entities.Map.GetRegionByLocation(c.Location).Name}"
+                    Name = "General informations",
+                    Attributes = new List<string>
+                    {
+                        "Name: " + c.Name,
+                        "TrueName: " + c.TrueName,
+                        "Sex: " + c.Sex,
+                        "Level: " + c.Level,
+                        "Location: " + dep.Entities.Map.GetRegionByLocation(c.Location).Name,
+                        "Origin region: " + c.OriginRegionName
+                    }
                 },
-                ThumbnailUrl = "https://s33.postimg.cc/h0wkmhnm7/153046781869422717_1.png"
+                //2 Stats
+                new CustomEmbedField()
+                {
+                    Name = "Statistics",
+                    Attributes = new List<string>
+                    {
+                       "Health: " + c.Stats.MaxHealth,
+                       "Strength: " + c.Stats.Strength,
+                       "Intelligence: " + c.Stats.Intelligence,
+                       "Dexterity: " + c.Stats.Dexterity,
+                       "Endurance: " + c.Stats.Endurance,
+                       "Agility: " + c.Stats.Agility
+                    }
+                }
             };
 
-            embed.AddField("Endurance", c.Stats.Endurance.ToString(), true);
-            embed.AddField("Strength", c.Stats.Strength.ToString(), true);
-            embed.AddField("Intelligence", c.Stats.Intelligence.ToString(), true);
-            embed.AddField("Agility", c.Stats.Agility.ToString(), true);
-            embed.AddField("Dexterity", c.Stats.Dexterity.ToString(), true);
+            string title = "Informations";
+
+            DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes);
 
             return embed;
         }

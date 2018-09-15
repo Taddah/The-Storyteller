@@ -55,7 +55,7 @@ namespace The_Storyteller.Commands.CGuild
                 };
 
                 //Comme souvent, choix du nom et vérification
-                DiscordEmbedBuilder embedChooseName = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("introductionChooseName", region: r));
+                DiscordEmbedBuilder embedChooseName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("introductionChooseName", region: r));
                 await ctx.RespondAsync(embed: embedChooseName);
 
                 do
@@ -84,7 +84,7 @@ namespace The_Storyteller.Commands.CGuild
                     }
                     else
                     {
-                        DiscordEmbedBuilder embed = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("regionNameTaken"));
+                        DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionNameTaken"));
                         await ctx.RespondAsync(embed: embed);
                     }
                 } while (!nameValid);
@@ -103,7 +103,7 @@ namespace The_Storyteller.Commands.CGuild
             dep.Entities.Guilds.AddGuild(g);
 
             //Message de bienvenue (YAY)
-            DiscordEmbedBuilder embedEnd = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("introductionGenFinish", region: r),
+            DiscordEmbedBuilder embedEnd = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("introductionGenFinish", region: r),
                 dep.Resources.GetString("introTypeStart"), true);
 
             await ctx.RespondAsync(embed: embedEnd);

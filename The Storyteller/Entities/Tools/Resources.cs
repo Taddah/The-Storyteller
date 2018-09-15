@@ -103,6 +103,11 @@ namespace The_Storyteller.Entities.Tools
                 result = result.Replace("$CHARACTER_SEX", "young lady");
             }
 
+            if(character.OriginRegionName != null)
+            {
+                result = result.Replace("CHARACTER_ORIGINEREGION", character.OriginRegionName);
+            }
+
             return result;
         }
 

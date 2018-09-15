@@ -41,7 +41,7 @@ namespace The_Storyteller.Commands.CMap
 
             if (r == null)
             {
-                await ctx.RespondAsync(embed: dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("regionNotFound"),
+                await ctx.RespondAsync(embed: dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionNotFound"),
                     withPicture: true));
                 return;
             }
@@ -73,7 +73,7 @@ namespace The_Storyteller.Commands.CMap
             embed.AddField($"Desert:", $"{desert}");
             embed.AddField($"Moutain:", $"{mountain}");
 
-           embed = dep.Embed.CreateEmbed(ctx.Member, dep.Resources.GetString("regionDescription", region: r));
+           embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionDescription", region: r));
 
            await ctx.RespondAsync(embed: embed);
             

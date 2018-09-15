@@ -2,6 +2,8 @@
 {
     internal class CharacterStats
     {
+        public int Health {get; set;}
+        public int MaxHealth { get; set; }
         public int Endurance { get; set; }
         public int Strength { get; set; }
         public int Intelligence { get; set; }
