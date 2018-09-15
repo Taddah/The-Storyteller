@@ -1,7 +1,7 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
-using System.Text;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Entities.Tools;
@@ -33,31 +33,65 @@ namespace The_Storyteller.Commands.CCharacter
             Character character = _dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
             CharacterInventory inventory = character.Inventory;
 
-            DiscordEmbedBuilder embed = new DiscordEmbedBuilder
+            List<string> resourceList = new List<string>();
+            foreach (GameObject go in inventory.GetItems())
             {
-                Title = $"Inventory of **{character.Name}**",
-                Description = $"Money: {inventory.GetMoney()}",
-                Color = Config.Instance.Color,
+                resourceList.Add($"'{go.Name}' -  Quantity: {go.Quantity}");
+            }
+
+            List<string> equipmentList = new List<string>();
+            foreach (GameObject go in inventory.GetItems())
+            {
+                equipmentList.Add($"'{go.Name}' -  Quantity: {go.Quantity}");
+            }
+
+            List<string> itemsList = new List<string>();
+            foreach (GameObject go in inventory.GetItems())
+            {
+                itemsList.Add($"'{go.Name}' -  Quantity: {go.Quantity}");
+            }
+
+
+            List<CustomEmbedField> attributes = new List<CustomEmbedField>
+            {
+
+                //1 Infos général du personnage
+                new CustomEmbedField()
+                {
+                    Name = "Resources",
+                    Attributes = resourceList
+                },
+                //2 equipments
+                new CustomEmbedField()
+                {
+                    Name = "Equipments",
+                    Attributes = equipmentList
+                },
+                //2 items
+                new CustomEmbedField()
+                {
+                    Name = "Items",
+                    Attributes = itemsList
+                },
+                //4 Currently equipped
+                new CustomEmbedField()
+                {
+                    Name = "Currently equipped",
+                    Attributes = new List<string>
+                    {
+                        "Head: ",
+                        "Right hand: ",
+                        "Left hand: ",
+                        "Body: ",
+                        "Feet: "
+                    }
+                }
             };
 
-            StringBuilder str = new StringBuilder();
-            str.AppendLine("```ml");
+            string title = $"Inventory of {character.Name}";
+            string description = $"Money: {inventory.GetMoney()}";
 
-            for (int i = 0 ; i < inventory.GetItems().Count; i++)
-            {
-                var go = inventory.GetItems()[i];
-                str.AppendLine($"'{go.Name}' -  Quantity: {go.Quantity} - Id: {i+1}");
-            }
-                
-
-            if(inventory.GetItems().Count == 0)
-                str.AppendLine("'Empty'");
-            str.AppendLine("```");
-
-
-            embed.AddField("Inventory", str.ToString());
-            embed.AddField("Equipment", "```Hand: ```");
-
+            DiscordEmbedBuilder embed = _dep.Embed.CreateDetailledEmbed(title, attributes, description, inline: true);
 
             DiscordDmChannel dm = await ctx.Member.CreateDmChannelAsync();
             await dm.SendMessageAsync(embed: embed);

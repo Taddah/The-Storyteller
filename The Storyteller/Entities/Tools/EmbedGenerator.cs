@@ -31,7 +31,7 @@ namespace The_Storyteller.Entities.Tools
             return embed;
         }
 
-        public DiscordEmbedBuilder CreateDetailledEmbed(string title, List<CustomEmbedField> fields, string description = "", string footer = "")
+        public DiscordEmbedBuilder CreateDetailledEmbed(string title, List<CustomEmbedField> fields, string description = "", string footer = "", bool inline = false)
         {
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder
             {
@@ -54,7 +54,7 @@ namespace The_Storyteller.Entities.Tools
                     strBuilder.AppendLine(attr);
                 strBuilder.AppendLine("```");
 
-                embed.AddField($"{field.Name}", strBuilder.ToString(), true);
+                embed.AddField($"{field.Name}", strBuilder.ToString(), inline);
             }
 
             return embed;

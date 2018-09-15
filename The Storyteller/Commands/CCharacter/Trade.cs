@@ -5,7 +5,6 @@ using DSharpPlus.Interactivity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Entities.Tools;
@@ -66,9 +65,7 @@ namespace The_Storyteller.Commands.CCharacter
             DiscordEmbedBuilder tradeEmbed = GetTradeEmbed(ctx, currentCharacter.Name, otherCharacter.Name, itemFromC1, itemFromC2);
 
             //Message d'aide
-            var tradeHelp = $"**{Config.Instance.Prefix}confirm** to confirm, **{Config.Instance.Prefix}cancel** to cancel, **{Config.Instance.Prefix}add [itemName] [quantity]** to add an item to trade";
-            await dmCurrentCharacter.SendMessageAsync(tradeHelp);
-            await dmOtherCharacter.SendMessageAsync(tradeHelp);
+
 
             DiscordMessage msg1 = await dmCurrentCharacter.SendMessageAsync(embed: tradeEmbed);
             DiscordMessage msg2 = await dmOtherCharacter.SendMessageAsync(embed: tradeEmbed);
@@ -178,7 +175,7 @@ namespace The_Storyteller.Commands.CCharacter
                         tradeIsOver = true;
                     }
 
-                    if(tradeC1Confirmed && tradeC2Confirmed)
+                    if (tradeC1Confirmed && tradeC2Confirmed)
                     {
                         currentCharacter.Inventory.AddItems(itemFromC2);
                         otherCharacter.Inventory.AddItems(itemFromC1);
@@ -196,21 +193,13 @@ namespace The_Storyteller.Commands.CCharacter
             DiscordEmoji emojiConfirmed = DiscordEmoji.FromName(ctx.Client, ":white_check_mark:");
             DiscordEmoji emojiCanceled = DiscordEmoji.FromName(ctx.Client, ":x:");
 
-            DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
-            {
-                Color = Config.Instance.Color,
-                Title = $"Trade between **{name1}** and **{name2}**"
-            };
+            string title = $"Trade between **{name1}** and **{name2}**";
 
-            //1 character1
-            StringBuilder str1 = new StringBuilder();
-            str1.AppendLine("```");
+            List<string> itemsP1 = new List<string>();
             foreach (GameObject go in itemFromP1)
             {
-                str1.AppendLine($"{go.Name} - Quantity: {go.Quantity}");
+                itemsP1.Add($"{go.Name} - Quantity: {go.Quantity}");
             }
-
-            str1.AppendLine("```");
 
             name1 = $"**{name1}**";
             if (tradeP1Confirmed)
@@ -222,17 +211,13 @@ namespace The_Storyteller.Commands.CCharacter
                 name1 += "   " + emojiCanceled;
             }
 
-            embed.AddField(name1, str1.ToString());
 
             //2 character2
-            StringBuilder str2 = new StringBuilder();
-            str2.AppendLine("```");
+            List<string> itemsP2 = new List<string>();
             foreach (GameObject go in itemFromP2)
             {
-                str2.AppendLine($"{go.Name} - Quantity: {go.Quantity}");
+                itemsP2.Add($"{go.Name} - Quantity: {go.Quantity}");
             }
-
-            str2.AppendLine("```");
 
             name2 = $"**{name2}**";
             if (tradeP2Confirmed)
@@ -244,7 +229,27 @@ namespace The_Storyteller.Commands.CCharacter
                 name2 += "   " + emojiCanceled;
             }
 
-            embed.AddField(name2, str2.ToString());
+
+            List<CustomEmbedField> attributes = new List<CustomEmbedField>
+            {
+                //1 items from P1
+                new CustomEmbedField()
+                {
+                    Name = name1,
+                    Attributes = itemsP1
+                },
+                //2 items from P2
+                new CustomEmbedField()
+                {
+                    Name =name2,
+                    Attributes = itemsP2
+                }
+            };
+
+            
+            string description = $"**{Config.Instance.Prefix}confirm** to confirm, **{Config.Instance.Prefix}cancel** to cancel, **{Config.Instance.Prefix}add [itemName] [quantity]** to add an item to trade";
+
+            DiscordEmbedBuilder embed = _dep.Embed.CreateDetailledEmbed(title, attributes, description: description, inline: true);
 
             return embed;
         }

@@ -78,8 +78,7 @@ namespace The_Storyteller.Commands.CCharacter
                 {
                     DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("publicInfo", c),
                     dep.Resources.GetString("needTrueName"));
-                    await channel.SendMessageAsync(embed: embed);
-                    await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
+                    await ctx.RespondAsync(embed: embed);
                     return;
                 }
                 else
@@ -159,7 +158,7 @@ namespace The_Storyteller.Commands.CCharacter
 
             string title = "Informations";
 
-            DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes);
+            DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes, inline: true);
 
             return embed;
         }
@@ -200,7 +199,7 @@ namespace The_Storyteller.Commands.CCharacter
 
             string title = "Informations";
 
-            DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes);
+            DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes, inline: true);
 
             return embed;
         }

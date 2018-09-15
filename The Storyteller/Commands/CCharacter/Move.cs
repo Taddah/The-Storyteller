@@ -117,6 +117,8 @@ namespace The_Storyteller.Commands.CCharacter
                 Location nextMapLoc = dep.Entities.Map.GetCentralCaseByDirection(currentRegion.GetCentralCase(), GetDirection(direction));
                 //Générer la région avec pour centre nextMapLoc
                 r = dep.Entities.Map.GenerateNewRegion(9, ctx.Guild.Id, regionName, r.Type, nextMapLoc);
+                DiscordEmbedBuilder embedRegionDiscovered = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionDiscovered", region: r));
+                await ctx.RespondAsync(embed: embedRegionDiscovered);
             }
 
             //Eau, impossible d'y aller (pour le moment)

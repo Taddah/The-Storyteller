@@ -117,6 +117,9 @@ namespace The_Storyteller.Commands.CVillage
             //Village rattaché à la région
             region.SetVillageId(village.Id);
 
+            //Case de la région mise en on valable
+            region.GetCentralCase().IsAvailable = false;
+
             _dep.Entities.Villages.AddVillage(village);
 
             //Bravo, village créé

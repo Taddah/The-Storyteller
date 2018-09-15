@@ -46,34 +46,7 @@ namespace The_Storyteller.Commands.CMap
                 return;
             }
 
-            var embed = new DiscordEmbedBuilder
-            {
-                Title = $"**{r.Name}** type: {r.Type}",
-                Description = $"Size: {r.GetSize()}"
-            };
-
-            var land = 0;
-            var mountain = 0;
-            var water = 0;
-            var desert = 0;
-            var forest = 0;
-
-            foreach (Case c in r.GetAllCases())
-            {
-                if (c.Type == CaseType.Desert) desert++;
-                if (c.Type == CaseType.Water) water++;
-                if (c.Type == CaseType.Mountain) mountain++;
-                if (c.Type == CaseType.Forest) forest++;
-                if (c.Type == CaseType.Land) land++;
-            }
-
-            embed.AddField($"Land:", $"{land}");
-            embed.AddField($"Water:", $"{water}");
-            embed.AddField($"Forest:", $"{forest}");
-            embed.AddField($"Desert:", $"{desert}");
-            embed.AddField($"Moutain:", $"{mountain}");
-
-           embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionDescription", region: r));
+           var embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionDescription", region: r));
 
            await ctx.RespondAsync(embed: embed);
             
