@@ -10,7 +10,8 @@ namespace The_Storyteller.Models.MMap
         Forest,
         Desert,
         Mountain,
-        Land
+        Land,
+        Village
     }
 
     internal class Case

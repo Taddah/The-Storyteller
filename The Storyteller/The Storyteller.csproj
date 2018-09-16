@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <None Remove="Commands\CVillage\CreateVillage.cs~RF3a2a4bb5.TMP" />
+    <None Remove="Commands\CVillage\VillageInfo.cs~RFb56876c.TMP" />
   </ItemGroup>
 
   <ItemGroup>

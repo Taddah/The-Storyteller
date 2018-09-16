@@ -94,6 +94,11 @@ namespace The_Storyteller.Entities.Game
             return _villages.SingleOrDefault(v => v.Id == id);
         }
 
+        internal Village GetVillageByName(string villageName)
+        {
+            return _villages.SingleOrDefault(v => v.Name.ToLower() == villageName.ToLower());
+        }
+
         public bool Exists(int id)
         {
             return _villages.Exists(v => v.Id == id);

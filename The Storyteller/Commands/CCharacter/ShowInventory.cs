@@ -12,25 +12,25 @@ namespace The_Storyteller.Commands.CCharacter
 {
     class ShowInventory
     {
-        private readonly Dependencies _dep;
+        private readonly Dependencies dep;
 
         public ShowInventory(Dependencies d)
         {
-            _dep = d;
+            dep = d;
         }
 
         [Command("inventory")]
         public async Task ShowInventoryCommand(CommandContext ctx)
         {
             //Vérification de base character + guild
-            if (!_dep.Entities.Characters.IsPresent(ctx.Member.Id)
-                || !_dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
+            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
+                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
 
             //1 Récupérer le Character et son inventaire
-            Character character = _dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
             CharacterInventory inventory = character.Inventory;
 
             List<string> resourceList = new List<string>();
@@ -91,7 +91,7 @@ namespace The_Storyteller.Commands.CCharacter
             string title = $"Inventory of {character.Name}";
             string description = $"Money: {inventory.GetMoney()}";
 
-            DiscordEmbedBuilder embed = _dep.Embed.CreateDetailledEmbed(title, attributes, description, inline: true);
+            DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes, description, inline: true);
 
             DiscordDmChannel dm = await ctx.Member.CreateDmChannelAsync();
             await dm.SendMessageAsync(embed: embed);

@@ -16,24 +16,24 @@ namespace The_Storyteller.Commands.CMap
     /// </summary>
     internal class CaseInfo
     {
-        private readonly Dependencies _dep;
+        private readonly Dependencies dep;
 
         public CaseInfo(Dependencies d)
         {
-            _dep = d;
+            dep = d;
         }
 
         [Command("caseinfo")]
         public async Task CaseInfoCommand(CommandContext ctx)
         {
             //Vérification de base character + guild
-            if (!_dep.Entities.Characters.IsPresent(ctx.Member.Id)
-                || !_dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
+            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
+                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
-            Character character = _dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
-            Region currentRegion = _dep.Entities.Map.GetRegionByLocation(character.Location);
+            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            Region currentRegion = dep.Entities.Map.GetRegionByLocation(character.Location);
             Case currentCase =currentRegion.GetCase(character.Location);
 
             //1 genral information
@@ -46,7 +46,7 @@ namespace The_Storyteller.Commands.CMap
 
             if(currentCase.VillageId > 0)
             {
-                var village = _dep.Entities.Villages.GetVillageById(currentCase.VillageId);
+                var village = dep.Entities.Villages.GetVillageById(currentCase.VillageId);
                 genInfo.Add("Village: " + village.Name);
             }
             else if (currentCase.IsBuildable())
@@ -58,14 +58,14 @@ namespace The_Storyteller.Commands.CMap
             List<string> charInfo = new List<string>();
             foreach(ulong charId in currentCase.GetCharactersOnCase())
             {
-                var c = _dep.Entities.Characters.GetCharacterByDiscordId(charId);
+                var c = dep.Entities.Characters.GetCharacterByDiscordId(charId);
                 charInfo.Add(c.Name + " - " + c.Sex);
             }
 
             //3 Case alentours
             List<string> caseInfo = new List<string>();
 
-            var northCase = _dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition, currentCase.Location.YPosition + 1));
+            var northCase = dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition, currentCase.Location.YPosition + 1));
             if (northCase != null)
             {
                 caseInfo.Add($"North {northCase.Location} - {northCase.Type}");
@@ -75,7 +75,7 @@ namespace The_Storyteller.Commands.CMap
                 caseInfo.Add("North : unknown");
             }
 
-            var southCase = _dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition, currentCase.Location.YPosition - 1));
+            var southCase = dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition, currentCase.Location.YPosition - 1));
             if (southCase != null)
             {
                 caseInfo.Add($"South {southCase.Location} - {southCase.Type}");
@@ -85,7 +85,7 @@ namespace The_Storyteller.Commands.CMap
                 caseInfo.Add("South : unknown");
             }
 
-            var eastCase = _dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition + 1, currentCase.Location.YPosition));
+            var eastCase = dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition + 1, currentCase.Location.YPosition));
             if (eastCase != null)
             {
                 caseInfo.Add($"East {eastCase.Location} - {eastCase.Type}");
@@ -95,7 +95,7 @@ namespace The_Storyteller.Commands.CMap
                 caseInfo.Add("East : unknown");
             }
 
-            var westCase = _dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition - 1, currentCase.Location.YPosition));
+            var westCase = dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition - 1, currentCase.Location.YPosition));
             if (westCase != null)
             {
                 caseInfo.Add($"West {westCase.Location} - {westCase.Type}");
@@ -126,7 +126,7 @@ namespace The_Storyteller.Commands.CMap
             };
 
             var title = "Case information";
-            var embed = _dep.Embed.CreateDetailledEmbed(title, attributes, inline: true);
+            var embed = dep.Embed.CreateDetailledEmbed(title, attributes, inline: true);
 
             var dm = await ctx.Member.CreateDmChannelAsync();
             await dm.SendMessageAsync(embed: embed);

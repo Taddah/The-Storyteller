@@ -9,6 +9,7 @@ using The_Storyteller.Entities.Game;
 using The_Storyteller.Entities.Tools;
 using The_Storyteller.Models.MCharacter;
 using The_Storyteller.Models.MMap;
+using The_Storyteller.Models.MVillage;
 
 namespace The_Storyteller.Commands.CCharacter
 {
@@ -123,30 +124,51 @@ namespace The_Storyteller.Commands.CCharacter
                 await ctx.RespondAsync(embed: embedRegionDiscovered);
             }
 
+            Region newRegion = dep.Entities.Map.GetRegionByLocation(newLocation);
+            Case lastCase = dep.Entities.Map.GetCase(character.Location);
+            Case newCase = newRegion.GetCase(newLocation);
+
             //Eau, impossible d'y aller (pour le moment)
-            if (dep.Entities.Map.GetRegionByLocation(newLocation).GetCase(newLocation).Type == CaseType.Water)
+            if (newCase.Type == CaseType.Water)
             {
                 DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("errorDirectionWater"));
                 await ctx.RespondAsync(embed: embed);
                 return;
             }
-            //Sinon, on bouge
+            //Village, à voir selon le type d'accès
+            else if (newCase.Type == CaseType.Village)
+            {
+                Village village = dep.Entities.Villages.GetVillageById(newCase.VillageId);
+                //Ne peut pas aller dans le village
+                if (village.VillagePermission == VillagePermission.villagers && character.VillageName != village.Name)
+                {
+                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("errorCanGoToVillage"));
+                    await ctx.RespondAsync(embed: embed);
+                    return;
+                }
+
+                //Va dans le village
+
+                DiscordEmbedBuilder embedEnterVillage = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("enterVillage", village: village));
+
+                await ctx.RespondAsync(embed: embedEnterVillage);
+            }
             else
             {
-                Region newRegion = dep.Entities.Map.GetRegionByLocation(newLocation);
-                Case lastCase = dep.Entities.Map.GetCase(character.Location);
-                Case newCase = newRegion.GetCase(newLocation);
-
-                lastCase.RemoveCharacter(character);
-                newCase.AddNewCharacter(character);
-
-                character.Location = newLocation;
-
                 DiscordEmbedBuilder embedCaseInfo = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("caseInfo", region: newRegion, mCase: newCase),
-                     dep.Resources.GetString("caseInfoDetails"));
+                 dep.Resources.GetString("caseInfoDetails"));
 
                 await ctx.RespondAsync(embed: embedCaseInfo);
             }
+
+            //Update location character
+            lastCase.RemoveCharacter(character);
+            newCase.AddNewCharacter(character);
+
+            character.Location = newLocation;
+
+
+
 
 
         }

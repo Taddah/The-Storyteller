@@ -9,6 +9,13 @@ namespace The_Storyteller.Models.MCharacter
         Female
     }
 
+    public enum Profession
+    {
+        Peasant,
+        Villager,
+        King
+    }
+
     internal class Character
     {
         public int Id { get; set; }
@@ -25,5 +32,6 @@ namespace The_Storyteller.Models.MCharacter
         public CharacterStats Stats { get; set; }
         public string OriginRegionName { get; set; }
         public string VillageName { get; set; }
+        public Profession profession { get; set; }
     }
 }

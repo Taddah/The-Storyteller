@@ -109,7 +109,7 @@ namespace The_Storyteller
             ////////VILLAGE COMMANDS
             _cnext.RegisterCommands<Commands.CVillage.CreateVillage>();
             _cnext.RegisterCommands<Commands.CVillage.VillageInfo>();
-            
+
 
             _client.Ready += OnReadyAsync;
             _client.GuildCreated += OnGuildCreated;

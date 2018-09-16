@@ -14,11 +14,11 @@ namespace The_Storyteller.Commands.CCharacter
 {
     class Trade
     {
-        private readonly Dependencies _dep;
+        private readonly Dependencies dep;
 
         public Trade(Dependencies d)
         {
-            _dep = d;
+            dep = d;
         }
 
 
@@ -26,9 +26,9 @@ namespace The_Storyteller.Commands.CCharacter
         public async Task TradeCommand(CommandContext ctx, DiscordMember member)
         {
             //Vérification de base character + guild
-            if (!_dep.Entities.Characters.IsPresent(ctx.Member.Id)
-                || !_dep.Entities.Characters.IsPresent(member.Id)
-                || !_dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
+            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
+                || !dep.Entities.Characters.IsPresent(member.Id)
+                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
@@ -37,8 +37,8 @@ namespace The_Storyteller.Commands.CCharacter
             bool tradeIsOver = false;
 
             //Nos deux character
-            Models.MCharacter.Character currentCharacter = _dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
-            Models.MCharacter.Character otherCharacter = _dep.Entities.Characters.GetCharacterByDiscordId(member.Id);
+            Models.MCharacter.Character currentCharacter = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            Models.MCharacter.Character otherCharacter = dep.Entities.Characters.GetCharacterByDiscordId(member.Id);
 
             //Liste des items à échanger
             List<GameObject> itemFromC1 = new List<GameObject>();
@@ -249,7 +249,7 @@ namespace The_Storyteller.Commands.CCharacter
             
             string description = $"**{Config.Instance.Prefix}confirm** to confirm, **{Config.Instance.Prefix}cancel** to cancel, **{Config.Instance.Prefix}add [itemName] [quantity]** to add an item to trade";
 
-            DiscordEmbedBuilder embed = _dep.Embed.CreateDetailledEmbed(title, attributes, description: description, inline: true);
+            DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes, description: description, inline: true);
 
             return embed;
         }

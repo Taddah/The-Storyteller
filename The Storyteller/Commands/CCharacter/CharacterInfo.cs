@@ -28,8 +28,9 @@ namespace The_Storyteller.Commands.CCharacter
         [Command("info")]
         public async Task CharacterInfoCommand(CommandContext ctx, params string[] name)
         {
-            //Auteur pas inscrit,
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id))
+            //Vérification de base character + guild
+            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
+                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
@@ -144,7 +145,8 @@ namespace The_Storyteller.Commands.CCharacter
                         "Experience: " + c.Experience + "/XXXXX",
                         "Energy: " + c.Energy + "/" + c.MaxEnergy,
                         "Location: " + c.Location,
-                        "Origin region: " + c.OriginRegionName
+                        "Origin region: " + c.OriginRegionName,
+                        "Profession: " + c.profession
                     }
                 },
                 //2 Stats
@@ -196,7 +198,8 @@ namespace The_Storyteller.Commands.CCharacter
                         "Sex: " + c.Sex,
                         "Level: " + c.Level,
                         "Location: " + dep.Entities.Map.GetRegionByLocation(c.Location).Name,
-                        "Origin region: " + c.OriginRegionName
+                        "Origin region: " + c.OriginRegionName,
+                        "Profession: " + c.profession
                     }
                 },
                 //2 Stats
