@@ -39,7 +39,7 @@ namespace The_Storyteller.Commands.CVillage
             if (region == null || region.GetVillageId() != -1 || !character.Location.Equals(region.GetCentralCase().Location))
             {
                 //Region n'appartient pas à un serveur, a déjà un village ou case pas adaptée, impossible de construire ici
-                DiscordEmbedBuilder embedNotPossible = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("createVillageNotPossible", character: character, region: region));
+                DiscordEmbedBuilder embedNotPossible = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("createVillageNotPossible", character: character, region: region));
                 await ctx.RespondAsync(embed: embedNotPossible);
                 return;
             }
@@ -47,7 +47,7 @@ namespace The_Storyteller.Commands.CVillage
             if (character.Inventory.GetMoney() < 500)
             {
                 //Trop pauvre pour construire un village ..
-                DiscordEmbedBuilder embedNoMoney = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("createVillageNoMoney", character: character));
+                DiscordEmbedBuilder embedNoMoney = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("createVillageNoMoney", character: character));
                 await ctx.RespondAsync(embed: embedNoMoney);
                 return;
             }
@@ -57,7 +57,7 @@ namespace The_Storyteller.Commands.CVillage
             InteractivityModule interactivity = ctx.Client.GetInteractivityModule();
             Village village = new Village();
             //1 Demander le nom
-            DiscordEmbedBuilder embedVillageName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("createVillageAskName"));
+            DiscordEmbedBuilder embedVillageName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("createVillageAskName"));
             await ctx.RespondAsync(embed: embedVillageName);
             bool VillageName = false;
             do
@@ -71,12 +71,12 @@ namespace The_Storyteller.Commands.CVillage
                         && msgTrueName.Message.Content.Length > 2)
                     {
                         village.Name = msgTrueName.Message.Content;
-                        village.Name = dep.Resources.RemoveMarkdown(village.Name);
+                        village.Name = dep.Dialog.RemoveMarkdown(village.Name);
                         VillageName = true;
                     }
                     else
                     {
-                        DiscordEmbedBuilder embedErrorTrueName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("startIntroTrueTaken"));
+                        DiscordEmbedBuilder embedErrorTrueName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("startIntroTrueTaken"));
                         await ctx.RespondAsync(embed: embedErrorTrueName);
                     }
                 }
@@ -115,7 +115,7 @@ namespace The_Storyteller.Commands.CVillage
             dep.Entities.Characters.EditCharacter(character);
 
             //become king
-            character.profession = Profession.King;
+            character.Profession = Profession.King;
 
             //Village rattaché à la région
             region.SetVillageId(village.Id);
@@ -127,7 +127,7 @@ namespace The_Storyteller.Commands.CVillage
             dep.Entities.Villages.AddVillage(village);
 
             //Bravo, village créé
-            DiscordEmbedBuilder embedVillageCreated = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("createVillageDone", character: character, village: village));
+            DiscordEmbedBuilder embedVillageCreated = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("createVillageDone", character: character, village: village));
             await ctx.RespondAsync(embed: embedVillageCreated);
 
         }

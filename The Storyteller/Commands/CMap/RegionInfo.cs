@@ -41,12 +41,12 @@ namespace The_Storyteller.Commands.CMap
 
             if (r == null)
             {
-                await ctx.RespondAsync(embed: dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionNotFound"),
+                await ctx.RespondAsync(embed: dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("regionNotFound"),
                     withPicture: true));
                 return;
             }
 
-           var embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionDescription", region: r));
+           var embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("regionDescription", region: r));
 
            await ctx.RespondAsync(embed: embed);
             

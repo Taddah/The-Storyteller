@@ -1,4 +1,7 @@
-﻿using The_Storyteller.Models.MMap;
+﻿using System.Xml.Serialization;
+using The_Storyteller.Models.MGameObject.Equipment.Weapons;
+using The_Storyteller.Models.MGameObject.GOResource;
+using The_Storyteller.Models.MMap;
 using The_Storyteller.Models.MVillage;
 
 namespace The_Storyteller.Models.MCharacter
@@ -16,7 +19,7 @@ namespace The_Storyteller.Models.MCharacter
         King
     }
 
-    internal class Character
+    public class Character
     {
         public int Id { get; set; }
         public ulong DiscordID { get; set; }
@@ -27,11 +30,13 @@ namespace The_Storyteller.Models.MCharacter
         public int Experience { get; set; }
         public int Energy { get; set; }
         public int MaxEnergy { get; set; }
+        [XmlElement(typeof(Wood))]
+        [XmlElement(typeof(Weapon))]
         public CharacterInventory Inventory { get; set; }
         public Location Location { get; set; }
         public CharacterStats Stats { get; set; }
         public string OriginRegionName { get; set; }
         public string VillageName { get; set; }
-        public Profession profession { get; set; }
+        public Profession Profession { get; set; }
     }
 }

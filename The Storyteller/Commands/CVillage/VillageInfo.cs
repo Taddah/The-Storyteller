@@ -34,7 +34,7 @@ namespace The_Storyteller.Commands.CVillage
             var character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
             if(character.VillageName == null)
             {
-                var embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("errorNotPartOfVillage"));
+                var embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("errorNotPartOfVillage"));
                 await ctx.RespondAsync(embed: embed);
                 return;
             }
@@ -69,7 +69,7 @@ namespace The_Storyteller.Commands.CVillage
             foreach (int cId in v.GetInhabitants())
             {
                 var c = dep.Entities.Characters.GetCharacterById(cId);
-                charactersList.Add($"{c.Name} - Profession: {c.profession}");
+                charactersList.Add($"{c.Name} - Profession: {c.Profession}");
             }
 
             List<string> buildingList = new List<string>();

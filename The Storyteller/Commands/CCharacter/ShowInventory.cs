@@ -34,21 +34,21 @@ namespace The_Storyteller.Commands.CCharacter
             CharacterInventory inventory = character.Inventory;
 
             List<string> resourceList = new List<string>();
-            foreach (GameObject go in inventory.GetItems())
+            foreach (GameObject go in inventory.GetResources())
             {
-                resourceList.Add($"'{go.Name}' -  Quantity: {go.Quantity}");
+                resourceList.Add($"{go.Name} -  Quantity: {go.Quantity}");
             }
 
             List<string> equipmentList = new List<string>();
-            foreach (GameObject go in inventory.GetItems())
+            foreach (GameObject go in inventory.GetEquipment())
             {
-                equipmentList.Add($"'{go.Name}' -  Quantity: {go.Quantity}");
+                equipmentList.Add($"{go.Name} -  Quantity: {go.Quantity}");
             }
 
             List<string> itemsList = new List<string>();
             foreach (GameObject go in inventory.GetItems())
             {
-                itemsList.Add($"'{go.Name}' -  Quantity: {go.Quantity}");
+                //itemsList.Add($"'{go.Name}' -  Quantity: {go.Quantity}");
             }
 
 

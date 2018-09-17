@@ -1,6 +1,6 @@
 ﻿namespace The_Storyteller.Models.MCharacter
 {
-    internal class CharacterStats
+    public class CharacterStats
     {
         public int Health {get; set;}
         public int MaxHealth { get; set; }

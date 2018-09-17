@@ -82,14 +82,14 @@ namespace The_Storyteller.Commands.CCharacter
                 //Trouvé, retourne info basique
                 if (c != null)
                 {
-                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("publicInfo", c),
-                    dep.Resources.GetString("needTrueName"));
+                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("publicInfo", c),
+                    dep.Dialog.GetString("needTrueName"));
                     await ctx.RespondAsync(embed: embed);
                     return;
                 }
                 else
                 {
-                    await ctx.RespondAsync(dep.Resources.GetString("errorCharacterUnknown"));
+                    await ctx.RespondAsync(dep.Dialog.GetString("errorCharacterUnknown"));
                     return;
                 }
             }
@@ -117,14 +117,14 @@ namespace The_Storyteller.Commands.CCharacter
                 c = dep.Entities.Characters.GetCharacterByName(strName);
                 if(c != null)
                 {
-                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("publicInfo", c),
-                    dep.Resources.GetString("needTrueName"));
+                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("publicInfo", c),
+                    dep.Dialog.GetString("needTrueName"));
                     await ctx.RespondAsync(embed: embed);
                     return;
                 }
             }
 
-            await ctx.RespondAsync(dep.Resources.GetString("errorCharacterUnknown"));
+            await ctx.RespondAsync(dep.Dialog.GetString("errorCharacterUnknown"));
         }
 
         public DiscordEmbedBuilder GetPersonalInfo(Character c)
@@ -146,7 +146,7 @@ namespace The_Storyteller.Commands.CCharacter
                         "Energy: " + c.Energy + "/" + c.MaxEnergy,
                         "Location: " + c.Location,
                         "Origin region: " + c.OriginRegionName,
-                        "Profession: " + c.profession
+                        "Profession: " + c.Profession
                     }
                 },
                 //2 Stats
@@ -199,7 +199,7 @@ namespace The_Storyteller.Commands.CCharacter
                         "Level: " + c.Level,
                         "Location: " + dep.Entities.Map.GetRegionByLocation(c.Location).Name,
                         "Origin region: " + c.OriginRegionName,
-                        "Profession: " + c.profession
+                        "Profession: " + c.Profession
                     }
                 },
                 //2 Stats

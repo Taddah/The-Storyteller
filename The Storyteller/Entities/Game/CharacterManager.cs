@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Xml.Serialization;
 using The_Storyteller.Models.MCharacter;
+using The_Storyteller.Models.MGameObject;
+using The_Storyteller.Models.MGameObject.GOResource;
+using The_Storyteller.Models.MGameObject.Others;
 
 namespace The_Storyteller.Entities.Game
 {
@@ -30,21 +34,68 @@ namespace The_Storyteller.Entities.Game
         private List<Character> LoadFromFile()
         {
             if (!File.Exists(_filename))
-                return new List<Character>();
-            using (var sr = new StreamReader(_filename))
             {
-                var res = JsonConvert.DeserializeObject<List<Character>>(sr.ReadToEnd());
-                if (res != null) return res;
+                return new List<Character>();
+            }
+            
+
+            using (StreamReader sr = new StreamReader(_filename))
+            {
+
+                List<Character> res = JsonConvert.DeserializeObject<List<Character>>(sr.ReadToEnd());
+                //var truc = JsonConvert.DeserializeXNode(sr.ReadToEnd());
+                //Console.WriteLine(truc);
+
+                if (res != null)
+                {
+                    foreach (Character c in res)
+                    {
+                        RebuildInventory(c);
+                    }
+
+                    return res;
+                }
                 return new List<Character>();
             }
         }
 
+        private Character RebuildInventory(Character c)
+        {
+            List<GameObject> newItems = new List<GameObject>();
+            List<GameObject> itemsToRemove = new List<GameObject>();
+
+            foreach (GameObject go in c.Inventory.GetAllGameObjects())
+            {
+                if (go.Name == "Money")
+                {
+                    newItems.Add(new Money(go.Quantity));
+                    itemsToRemove.Add(go);
+                }
+                if (go.Name == "Wood")
+                {
+                    newItems.Add(new Wood(go.Quantity));
+                    itemsToRemove.Add(go);
+                }
+            }
+
+            c.Inventory.RemoveGameObject(itemsToRemove);
+            c.Inventory.AddItems(newItems);
+
+            return c;
+        }
+
         private async Task SaveToFile()
         {
-            using (var sw = new StreamWriter(_filename))
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Character>));
+            serializer.Serialize(Console.Out, _characters);
+
+            using (StreamWriter sw = new StreamWriter(_filename))
             {
+                JsonSerializerSettings jset = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
                 await sw.WriteAsync(JsonConvert.SerializeObject(_characters));
             }
+
+
         }
 
         private async Task DoPeriodicCharacterSave()
@@ -55,11 +106,11 @@ namespace The_Storyteller.Entities.Game
                 {
                     await SaveToFile();
                 }
-                catch(IOException)
+                catch (IOException)
                 {
 
                 }
-                
+
                 Thread.Sleep(TimeSpan.FromSeconds(10));
             }
         }
@@ -83,7 +134,7 @@ namespace The_Storyteller.Entities.Game
         {
             if (IsPresent(c.DiscordID))
             {
-                var oldC = GetCharacterByDiscordId(c.DiscordID);
+                Character oldC = GetCharacterByDiscordId(c.DiscordID);
                 oldC = c;
                 StartAsyncSave();
             }
@@ -126,8 +177,11 @@ namespace The_Storyteller.Entities.Game
 
         public void DeleteCharacter(ulong discordId)
         {
-            var delC = _characters.SingleOrDefault(c => c.DiscordID == discordId);
-            if (delC != null) _characters.Remove(delC);
+            Character delC = _characters.SingleOrDefault(c => c.DiscordID == discordId);
+            if (delC != null)
+            {
+                _characters.Remove(delC);
+            }
         }
     }
 }

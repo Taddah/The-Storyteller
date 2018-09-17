@@ -45,7 +45,7 @@ namespace The_Storyteller.Commands.CCharacter
             {
                 do
                 {
-                    DiscordEmbedBuilder embedErrorDirection = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("errorDirection"));
+                    DiscordEmbedBuilder embedErrorDirection = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("errorDirection"));
                     await ctx.RespondAsync(embed: embedErrorDirection);
                     MessageContext msgDirection = await interactivity.WaitForMessageAsync(xm => xm.Author.Id == ctx.User.Id
                     && xm.ChannelId == ctx.Channel.Id, TimeSpan.FromMinutes(1));
@@ -80,7 +80,7 @@ namespace The_Storyteller.Commands.CCharacter
                 };
 
                 //Choix du nom de la région, demander tant qu'il n'est pas valide
-                DiscordEmbedBuilder embedChooseName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("introductionChooseName", region: r));
+                DiscordEmbedBuilder embedChooseName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("introductionChooseName", region: r));
                 await ctx.RespondAsync(embed: embedChooseName);
                 string regionName = "";
                 bool nameValid = false;
@@ -102,7 +102,7 @@ namespace The_Storyteller.Commands.CCharacter
                         }
 
                         //Enlever *, ` et _
-                        regionName = dep.Resources.RemoveMarkdown(regionName);
+                        regionName = dep.Dialog.RemoveMarkdown(regionName);
                     }
 
                     if (!dep.Entities.Map.IsRegionNameTaken(regionName) && regionName.Length > 3 && regionName.Length <= 50)
@@ -111,7 +111,7 @@ namespace The_Storyteller.Commands.CCharacter
                     }
                     else
                     {
-                        DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionNameTaken"));
+                        DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("regionNameTaken"));
                         await ctx.RespondAsync(embed: embed);
                     }
                 } while (!nameValid);
@@ -120,7 +120,7 @@ namespace The_Storyteller.Commands.CCharacter
                 Location nextMapLoc = dep.Entities.Map.GetCentralCaseByDirection(currentRegion.GetCentralCase(), GetDirection(direction));
                 //Générer la région avec pour centre nextMapLoc
                 r = dep.Entities.Map.GenerateNewRegion(9, ctx.Guild.Id, regionName, r.Type, nextMapLoc);
-                DiscordEmbedBuilder embedRegionDiscovered = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionDiscovered", region: r));
+                DiscordEmbedBuilder embedRegionDiscovered = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("regionDiscovered", region: r));
                 await ctx.RespondAsync(embed: embedRegionDiscovered);
             }
 
@@ -131,7 +131,7 @@ namespace The_Storyteller.Commands.CCharacter
             //Eau, impossible d'y aller (pour le moment)
             if (newCase.Type == CaseType.Water)
             {
-                DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("errorDirectionWater"));
+                DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("errorDirectionWater"));
                 await ctx.RespondAsync(embed: embed);
                 return;
             }
@@ -142,21 +142,21 @@ namespace The_Storyteller.Commands.CCharacter
                 //Ne peut pas aller dans le village
                 if (village.VillagePermission == VillagePermission.villagers && character.VillageName != village.Name)
                 {
-                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("errorCanGoToVillage"));
+                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("errorCanGoToVillage"));
                     await ctx.RespondAsync(embed: embed);
                     return;
                 }
 
                 //Va dans le village
 
-                DiscordEmbedBuilder embedEnterVillage = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("enterVillage", village: village));
+                DiscordEmbedBuilder embedEnterVillage = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("enterVillage", village: village));
 
                 await ctx.RespondAsync(embed: embedEnterVillage);
             }
             else
             {
-                DiscordEmbedBuilder embedCaseInfo = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("caseInfo", region: newRegion, mCase: newCase),
-                 dep.Resources.GetString("caseInfoDetails"));
+                DiscordEmbedBuilder embedCaseInfo = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("caseInfo", region: newRegion, mCase: newCase),
+                 dep.Dialog.GetString("caseInfoDetails"));
 
                 await ctx.RespondAsync(embed: embedCaseInfo);
             }

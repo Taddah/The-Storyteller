@@ -1,12 +1,14 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Xml.Serialization;
+using The_Storyteller.Models.MGameObject.Equipment.Weapons;
+using The_Storyteller.Models.MGameObject.GOResource;
+using The_Storyteller.Models.MGameObject.Others;
 
 namespace The_Storyteller.Models.MGameObject
 {
-    class Inventory
+    public class Inventory
     {
         [JsonProperty("inventory")]
         private List<GameObject> _gameObjects;
@@ -18,80 +20,167 @@ namespace The_Storyteller.Models.MGameObject
 
         public int GetMoney()
         {
-            var money =  _gameObjects.SingleOrDefault(item => item.Name == "money");
-            if (money == null)
+            if (!(_gameObjects.SingleOrDefault(item => item is Money) is Money money))
             {
                 AddMoney(0);
                 return 0;
             }
             return money.Quantity;
-            
         }
 
         public void AddMoney(int quantityToAdd)
         {
-            if (!_gameObjects.Exists(item => item.Name == "money"))
-                _gameObjects.Add(new GameObject()
-                {
-                    Name = "money",
-                    Quantity = 0,
-                    Value = 1
-                });
+            if (!_gameObjects.Exists(item => item is Money))
+            {
+                _gameObjects.Add(new Money());
+            }
 
-            _gameObjects.SingleOrDefault(item => item.Name == "money").Quantity += quantityToAdd;
+            _gameObjects.SingleOrDefault(item => item is Money).Quantity += quantityToAdd;
         }
 
         public void RemoveMoney(int quantityToRemove)
         {
-            if (!_gameObjects.Exists(item => item.Name == "money"))
-                _gameObjects.Add(new GameObject()
-                {
-                    Name = "money",
-                    Quantity = 0,
-                    Value = 1
-                });
+            if (!_gameObjects.Exists(item => item is Money))
+            {
+                _gameObjects.Add(new Money());
+            }
 
-            if (_gameObjects.SingleOrDefault(item => item.Name == "money").Quantity >= quantityToRemove)
-                _gameObjects.SingleOrDefault(item => item.Name == "money").Quantity -= quantityToRemove;
+            if (_gameObjects.SingleOrDefault(item => item is Money).Quantity >= quantityToRemove)
+            {
+                _gameObjects.SingleOrDefault(item => item is Money).Quantity -= quantityToRemove;
+            }
         }
 
+        /// <summary>
+        /// Return everything but money
+        /// </summary>
+        /// <returns></returns>
         public List<GameObject> GetItems()
         {
-            return _gameObjects.Where(item => item.Name != "money").ToList();
+            return _gameObjects.Where(item => !(item is Money)).ToList();
         }
 
-        public bool HasObjectAndQuantity(string objectName, int quantity)
+        public List<GameObject> GetAllGameObjects()
         {
-            return _gameObjects.Exists(go => go.Name.ToLower() == objectName.ToLower() && go.Quantity >= quantity);
+            return _gameObjects;
+        }
+
+        /// <summary>
+        /// Return item of type resource
+        /// </summary>
+        /// <returns></returns>
+        public List<GameObject> GetResources()
+        {
+            return _gameObjects.Where(item => item is Resource).ToList();
+
+        }
+
+        /// <summary>
+        /// Return item of type equipment
+        /// </summary>
+        /// <returns></returns>
+        public List<GameObject> GetEquipment()
+        {
+            return _gameObjects.Where(item => item is Weapon).ToList();
+
+        }
+
+        public bool HasObjectAndQuantity(GameObject gameObject, int quantity)
+        {
+            IEnumerable<GameObject> res = _gameObjects.Where(go => go.GetType() == gameObject.GetType() && go.Quantity >= quantity);
+            if (res == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public GameObject GetItemByName(string name)
+        {
+            return _gameObjects.SingleOrDefault(go => go.Name.ToLower() == name.ToLower());
+        }
+
+        public GameObject GetItemByType(GameObject gameObject)
+        {
+            return _gameObjects.SingleOrDefault(go => go.GetType() == gameObject.GetType());
         }
 
         public GameObject GetGOAndRemoveFromInventory(string name, int quantity)
         {
-            if (!HasObjectAndQuantity(name, quantity)) return null;
+            GameObject go = GetItemByName(name);
+            if (go == null)
+            {
+                return null;
+            }
 
-            var gameobject = _gameObjects.SingleOrDefault(go => go.Name.ToLower() == name.ToLower());
+            return GetGOAndRemoveFromInventory(go, quantity);
+        }
+
+
+        public GameObject GetGOAndRemoveFromInventory(GameObject gameObject, int quantity)
+        {
+            if (!HasObjectAndQuantity(gameObject, quantity))
+            {
+                return null;
+            }
+
+            GameObject gameobject = _gameObjects.SingleOrDefault(go => go.GetType() == gameObject.GetType());
             gameobject.Quantity -= quantity;
 
             //Si quantité = 0 et pas money, on vire de l'inventaire
-            if (name != "money" && gameobject.Quantity == 0) _gameObjects.Remove(gameobject);
-
-            return new GameObject()
+            if (!(gameObject is Money) && gameobject.Quantity == 0)
             {
-                Name = gameobject.Name,
-                Quantity = quantity
-            };
+                _gameObjects.Remove(gameobject);
+            }
+
+            //Sinon, copie 
+            GameObject newGameObject = gameObject.Clone() as GameObject;
+            newGameObject.Quantity = quantity;
+
+            return newGameObject;
         }
 
         public void AddItems(List<GameObject> gameObjects)
         {
-            foreach(GameObject go in gameObjects)
+            foreach (GameObject gameObject in gameObjects)
             {
-                //Si item existe déjà, on additionne les quantité
-                if (_gameObjects.Exists(item => item.Name == go.Name))
-                    _gameObjects.Single(item => item.Name == go.Name).Quantity += go.Quantity;
+                GameObject go = GetItemByType(gameObject);
+                if (go == null)
+                {
+                    _gameObjects.Add(gameObject);
+                }
                 else
-                    _gameObjects.Add(go);
+                {
+                    go.Quantity += gameObject.Quantity;
+                }
             }
+        }
+
+        public void AddItem(GameObject gameObject)
+        {
+            GameObject go = GetItemByType(gameObject);
+            if (go == null)
+            {
+                _gameObjects.Add(gameObject);
+            }
+            else
+            {
+                go.Quantity += gameObject.Quantity;
+            }
+        }
+
+        public void RemoveGameObject(GameObject go)
+        {
+            _gameObjects.Remove(go);
+        }
+
+        public void RemoveGameObject(List<GameObject> gos)
+        {
+            foreach(GameObject go in gos)
+                _gameObjects.Remove(go);
         }
     }
 }

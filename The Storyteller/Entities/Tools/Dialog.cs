@@ -10,11 +10,11 @@ namespace The_Storyteller.Entities.Tools
     /// <summary>
     /// Classe de ressource pour les strings
     /// </summary>
-    internal class Resources
+    internal class Dialog
     {
         private readonly Dictionary<string, string> text;
 
-        public Resources(string filename)
+        public Dialog(string filename)
         {
             using (var sr = new StreamReader(filename))
             {

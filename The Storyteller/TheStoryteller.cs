@@ -1,15 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Entities;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
-using The_Storyteller.Commands;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Entities.Tools;
 
@@ -22,7 +19,7 @@ namespace The_Storyteller
         private readonly EmbedGenerator _embed;
 
         private readonly EntityManager _entityManager;
-        private readonly Resources _res;
+        private readonly Dialog _res;
         private CommandsNextModule _cnext;
         private InteractivityModule _interactivity;
 
@@ -54,7 +51,7 @@ namespace The_Storyteller
             });
 
             _cts = new CancellationTokenSource();
-            _res = new Resources("textResources.json");
+            _res = new Dialog("textResources.json");
             _embed = new EmbedGenerator();
 
             _entityManager = new EntityManager();
@@ -62,13 +59,13 @@ namespace The_Storyteller
             //Création et ajout des dépendances accessibles depuis toutes les commandes 
             //(voir les exemples)
             DependencyCollection dep = null;
-            using (var d = new DependencyCollectionBuilder())
+            using (DependencyCollectionBuilder d = new DependencyCollectionBuilder())
             {
                 d.AddInstance(new Dependencies
                 {
                     Interactivity = _interactivity,
                     Cts = _cts,
-                    Resources = _res,
+                    Dialog = _res,
                     Embed = _embed,
                     Entities = _entityManager
                 });
@@ -85,10 +82,6 @@ namespace The_Storyteller
                 IgnoreExtraArguments = true,
                 Dependencies = dep
             });
-            
-
-            _cnext.RegisterCommands<Test>();
-            
 
             /////////CHARACTER COMMANDS
             _cnext.RegisterCommands<Commands.CCharacter.CharacterInfo>();
@@ -131,7 +124,9 @@ namespace The_Storyteller
         private async Task WaitForCancellationAsync()
         {
             while (!_cts.IsCancellationRequested)
+            {
                 await Task.Delay(500);
+            }
         }
 
         private async Task OnReadyAsync(ReadyEventArgs e)
@@ -145,7 +140,7 @@ namespace The_Storyteller
             e.Client.DebugLogger.LogMessage(LogLevel.Info, "The Storyteller", $"New Guild: {e.Guild.Name}",
                 DateTime.Now);
 
-            var embed = new DiscordEmbedBuilder()
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
             {
                 Description = _res.GetString("introduction"),
                 Footer = new DiscordEmbedBuilder.EmbedFooter
@@ -155,7 +150,7 @@ namespace The_Storyteller
                 ImageUrl = "https://s33.postimg.cc/h0wkmhnm7/153046781869422717_1.png",
                 Color = Config.Instance.Color
             };
-                
+
             await e.Guild.GetDefaultChannel().SendMessageAsync(embed: embed);
         }
     }

@@ -5,7 +5,7 @@ namespace The_Storyteller.Models.MMap
     /// <summary>
     /// Jeu de coordonnées tout simple X Y
     /// </summary>
-    internal class Location
+    public class Location
     {
         public Location()
         {

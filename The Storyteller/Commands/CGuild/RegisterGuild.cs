@@ -32,7 +32,7 @@ namespace The_Storyteller.Commands.CGuild
             //Ce serveur discord est déjà enregistré et dispose de sa propre map
             if (dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
-                await ctx.RespondAsync(dep.Resources.GetString("errorGuildAlreadyRegistered"));
+                await ctx.RespondAsync(dep.Dialog.GetString("errorGuildAlreadyRegistered"));
                 return;
             }
 
@@ -55,7 +55,7 @@ namespace The_Storyteller.Commands.CGuild
                 };
 
                 //Comme souvent, choix du nom et vérification
-                DiscordEmbedBuilder embedChooseName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("introductionChooseName", region: r));
+                DiscordEmbedBuilder embedChooseName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("introductionChooseName", region: r));
                 await ctx.RespondAsync(embed: embedChooseName);
 
                 do
@@ -75,7 +75,7 @@ namespace The_Storyteller.Commands.CGuild
                         }
 
                         //Enlever *, ` et _
-                        regionName = dep.Resources.RemoveMarkdown(regionName);
+                        regionName = dep.Dialog.RemoveMarkdown(regionName);
                     }
 
                     if (!dep.Entities.Map.IsRegionNameTaken(regionName) && regionName.Length > 3 && regionName.Length <= 50)
@@ -84,7 +84,7 @@ namespace The_Storyteller.Commands.CGuild
                     }
                     else
                     {
-                        DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("regionNameTaken"));
+                        DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("regionNameTaken"));
                         await ctx.RespondAsync(embed: embed);
                     }
                 } while (!nameValid);
@@ -103,8 +103,8 @@ namespace The_Storyteller.Commands.CGuild
             dep.Entities.Guilds.AddGuild(g);
 
             //Message de bienvenue (YAY)
-            DiscordEmbedBuilder embedEnd = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Resources.GetString("introductionGenFinish", region: r),
-                dep.Resources.GetString("introTypeStart"), true);
+            DiscordEmbedBuilder embedEnd = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("introductionGenFinish", region: r),
+                dep.Dialog.GetString("introTypeStart"), true);
 
             await ctx.RespondAsync(embed: embedEnd);
         }

@@ -13,7 +13,7 @@ namespace The_Storyteller.Entities
         internal InteractivityModule Interactivity { get; set; }
         internal CancellationTokenSource Cts { get; set; }
         internal EmbedGenerator Embed { get; set; }
-        internal Resources Resources { get; set; }
+        internal Dialog Dialog { get; set; }
 
         ///////////////////////////////////////////
         internal EntityManager Entities { get; set; }
