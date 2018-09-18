@@ -19,5 +19,10 @@ namespace The_Storyteller.Models.MGameObject
         }
 
         public abstract XmlElement Seralize(XmlDocument doc);
+
+        public static GameObject Build(XmlElement element)
+        {
+            throw new Exception("Build function is not implemented");
+        }
     }
 }

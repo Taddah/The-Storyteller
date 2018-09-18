@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using The_Storyteller.Models.MGameObject;
+using The_Storyteller.Models.MGameObject.Equipment.Weapons;
+using The_Storyteller.Models.MGameObject.GOResource;
+using The_Storyteller.Models.MGameObject.Others;
 
 namespace The_Storyteller.Entities.Game
 {
@@ -14,7 +16,7 @@ namespace The_Storyteller.Entities.Game
     {
         private readonly string _filename;
 
-        private List<Inventory> _inventories;
+        private readonly List<Inventory> _inventories;
 
         public InventoryManager(string filename)
         {
@@ -22,7 +24,7 @@ namespace The_Storyteller.Entities.Game
             _inventories = LoadFromFile();
 
             Task task = new Task(async () => await DoPeriodicCharacterSave());
-            task.Start();
+             task.Start();
         }
 
         private async Task DoPeriodicCharacterSave()
@@ -44,7 +46,42 @@ namespace The_Storyteller.Entities.Game
 
         public List<Inventory> LoadFromFile()
         {
-            return new List<Inventory>();
+            if (!File.Exists(_filename))
+            {
+                return new List<Inventory>();
+            }
+
+            List<Inventory> listInv = new List<Inventory>();
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(_filename);
+
+            //get inventories
+            XmlNode inventories = doc.GetElementsByTagName("inventories").Item(0);
+
+            //Pour chaque inventaire
+            foreach (XmlElement inventory in inventories.ChildNodes)
+            {
+                if (!ulong.TryParse(inventory.GetAttribute("id"), out ulong id))
+                {
+                    break;
+                }
+
+                Inventory inv = new Inventory
+                {
+                    Id = id
+
+                };
+
+                foreach (XmlElement obj in inventory.ChildNodes)
+                {
+                    GameObject gameObject = BuildGameObject(obj);
+                    inv.AddItem(gameObject);
+                }
+                listInv.Add(inv);
+            }
+
+            return listInv;
         }
 
         public async Task SaveToFile()
@@ -52,12 +89,12 @@ namespace The_Storyteller.Entities.Game
             XmlDocument doc = new XmlDocument();
             XmlElement root = doc.CreateElement("inventories");
 
-            foreach(Inventory inv in _inventories)
+            foreach (Inventory inv in _inventories)
             {
                 XmlElement inventory1 = doc.CreateElement("inventory");
                 inventory1.SetAttribute("id", inv.Id.ToString());
 
-                foreach(GameObject go in inv.GetAllGameObjects())
+                foreach (GameObject go in inv.GetAllGameObjects())
                 {
                     XmlElement xmlGo = go.Seralize(doc);
                     inventory1.AppendChild(xmlGo);
@@ -70,13 +107,23 @@ namespace The_Storyteller.Entities.Game
 
             await Task.Factory.StartNew(delegate
             {
-                using (var sw = new StreamWriter(_filename))
+                using (StreamWriter sw = new StreamWriter(_filename))
                 {
                     doc.Save(sw);
                 }
             });
+        }
 
-            
+        public GameObject BuildGameObject(XmlElement element)
+        {
+            string type = element.GetAttribute("type");
+            switch (type)
+            {
+                case "money": return Money.Build(element);
+                case "wood": return Wood.Build(element);
+                case "weapon": return Weapon.Build(element);
+                default: return null;
+            }
         }
 
         public Inventory GetInventoryById(ulong id)
@@ -86,7 +133,10 @@ namespace The_Storyteller.Entities.Game
 
         public void AddInventory(Inventory inv)
         {
-            if (Exist(inv)) return;
+            if (Exist(inv))
+            {
+                return;
+            }
 
             _inventories.Add(inv);
         }

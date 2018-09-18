@@ -141,7 +141,14 @@ namespace The_Storyteller.Commands.CCharacter
                 inv.Id = c.DiscordID;
                 inv.AddMoney(500);
                 inv.AddItem(new Wood(10));
-                inv.AddItem(new Weapon("Weapon", 10, 10, 1, 2));
+                inv.AddItem(new Weapon()
+                {
+                    Name = "Awesome sword",
+                    Quantity = 1,
+                    AttackDamage = 10,
+                    CraftsmanId = 100,
+                    Hand = 2
+                });
 
                 dep.Entities.Inventories.AddInventory(inv);
                 
