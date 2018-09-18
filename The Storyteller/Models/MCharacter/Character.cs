@@ -30,9 +30,6 @@ namespace The_Storyteller.Models.MCharacter
         public int Experience { get; set; }
         public int Energy { get; set; }
         public int MaxEnergy { get; set; }
-        [XmlElement(typeof(Wood))]
-        [XmlElement(typeof(Weapon))]
-        public CharacterInventory Inventory { get; set; }
         public Location Location { get; set; }
         public CharacterStats Stats { get; set; }
         public string OriginRegionName { get; set; }

@@ -2,17 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace The_Storyteller.Models.MGameObject.Equipment.Weapons
 {
     public class Weapon : GameObject
     {
-        [JsonProperty("AttackDamage")]
         public int AttackDamage { get; set; }
-        [JsonProperty("CraftsmanId")]
         public int CraftsmanId { get; set; }
-        [JsonProperty("Hand")]
         public int Hand { get; set; }
 
         public Weapon(string name, int attackDamage, int craftsmanId, int handNumber, int quantity = 1)
@@ -25,5 +23,18 @@ namespace The_Storyteller.Models.MGameObject.Equipment.Weapons
         }
 
         public Weapon() { }
+
+        public override XmlElement Seralize(XmlDocument doc)
+        {
+            XmlElement element = doc.CreateElement("object");
+            element.SetAttribute("type", "weapon");
+            element.SetAttribute("name", this.Name);
+            element.SetAttribute("quantity", this.Quantity.ToString());
+            element.SetAttribute("attackDamage", this.AttackDamage.ToString());
+            element.SetAttribute("craftsmanId", this.CraftsmanId.ToString());
+            element.SetAttribute("hand", this.Hand.ToString());
+
+            return element;
+        }
     }
 }

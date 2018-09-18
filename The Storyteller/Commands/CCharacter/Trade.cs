@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Entities.Tools;
+using The_Storyteller.Models.MCharacter;
 using The_Storyteller.Models.MGameObject;
 
 namespace The_Storyteller.Commands.CCharacter
@@ -37,8 +38,12 @@ namespace The_Storyteller.Commands.CCharacter
             bool tradeIsOver = false;
 
             //Nos deux character
-            Models.MCharacter.Character currentCharacter = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
-            Models.MCharacter.Character otherCharacter = dep.Entities.Characters.GetCharacterByDiscordId(member.Id);
+            Character currentCharacter = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            Character otherCharacter = dep.Entities.Characters.GetCharacterByDiscordId(member.Id);
+
+            //Les deux inventaires
+            Inventory invC1 = dep.Entities.Inventories.GetInventoryById(currentCharacter.DiscordID);
+            Inventory invC2 = dep.Entities.Inventories.GetInventoryById(otherCharacter.DiscordID);
 
             //Liste des items à échanger
             List<GameObject> itemFromC1 = new List<GameObject>();
@@ -126,7 +131,7 @@ namespace The_Storyteller.Commands.CCharacter
                             //b) on vérifie si le joueur a bien les items en inventaire
                             if (tradeMsg.Message.Author.Id == currentCharacter.DiscordID)
                             {
-                                GameObject go = currentCharacter.Inventory.GetGOAndRemoveFromInventory(itemName, itemCount);
+                                GameObject go = invC1.GetGOAndRemoveFromInventory(itemName, itemCount);
                                 if (go != null)
                                 {
                                     //Si item existe déjà, on additionne les quantité
@@ -142,7 +147,7 @@ namespace The_Storyteller.Commands.CCharacter
                             }
                             else if (tradeMsg.Message.Author.Id == otherCharacter.DiscordID)
                             {
-                                GameObject go = otherCharacter.Inventory.GetGOAndRemoveFromInventory(itemName, itemCount);
+                                GameObject go = invC2.GetGOAndRemoveFromInventory(itemName, itemCount);
                                 if (go != null)
                                 {
                                     //Si item existe déjà, on additionne les quantité
@@ -170,15 +175,15 @@ namespace The_Storyteller.Commands.CCharacter
                     {
                         await dmCurrentCharacter.SendMessageAsync("Trade has been canceled");
                         await dmOtherCharacter.SendMessageAsync("Trade has been canceled");
-                        currentCharacter.Inventory.AddItems(itemFromC1);
-                        otherCharacter.Inventory.AddItems(itemFromC2);
+                        invC1.AddItems(itemFromC1);
+                        invC2.AddItems(itemFromC2);
                         tradeIsOver = true;
                     }
 
                     if (tradeC1Confirmed && tradeC2Confirmed)
                     {
-                        currentCharacter.Inventory.AddItems(itemFromC2);
-                        otherCharacter.Inventory.AddItems(itemFromC1);
+                        invC1.AddItems(itemFromC2);
+                        invC2.AddItems(itemFromC1);
                     }
 
 
@@ -246,7 +251,7 @@ namespace The_Storyteller.Commands.CCharacter
                 }
             };
 
-            
+
             string description = $"**{Config.Instance.Prefix}confirm** to confirm, **{Config.Instance.Prefix}cancel** to cancel, **{Config.Instance.Prefix}add [itemName] [quantity]** to add an item to trade";
 
             DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes, description: description, inline: true);

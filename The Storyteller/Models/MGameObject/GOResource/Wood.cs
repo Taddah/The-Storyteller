@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace The_Storyteller.Models.MGameObject.GOResource
 {
-    [JsonObject("wood")]
     public class Wood : Resource
     {
 
@@ -17,7 +17,16 @@ namespace The_Storyteller.Models.MGameObject.GOResource
             Name = "Wood";
             Quantity = quantity;
         }
+        
 
-        public Wood() { }
+        public override XmlElement Seralize(XmlDocument doc)
+        {
+            XmlElement element = doc.CreateElement("object");
+            element.SetAttribute("type", "wood");
+            element.SetAttribute("name", this.Name);
+            element.SetAttribute("quantity", this.Quantity.ToString());
+
+            return element;
+        }
     }
 }

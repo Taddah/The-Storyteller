@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Xml;
 using System.Xml.Serialization;
 using The_Storyteller.Models.MGameObject.Equipment.Weapons;
 using The_Storyteller.Models.MGameObject.GOResource;
@@ -8,9 +9,7 @@ namespace The_Storyteller.Models.MGameObject
 {
     public abstract class GameObject : ICloneable
     {
-        [JsonProperty("Name")]
         public string Name { get; set; }
-        [JsonProperty("Quantity")]
         public int Quantity { get; set; }
         
 
@@ -18,5 +17,7 @@ namespace The_Storyteller.Models.MGameObject
         {
             return this.MemberwiseClone();
         }
+
+        public abstract XmlElement Seralize(XmlDocument doc);
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace The_Storyteller.Models.MGameObject.GOResource
 {
-    public class Resource : GameObject
+    public abstract class Resource : GameObject
     {
     }
 }

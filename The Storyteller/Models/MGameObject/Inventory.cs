@@ -10,8 +10,11 @@ namespace The_Storyteller.Models.MGameObject
 {
     public class Inventory
     {
-        [JsonProperty("inventory")]
+
+        public ulong Id { get; set; }
+
         private List<GameObject> _gameObjects;
+
 
         public Inventory()
         {

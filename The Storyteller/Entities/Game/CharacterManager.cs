@@ -43,51 +43,18 @@ namespace The_Storyteller.Entities.Game
             {
 
                 List<Character> res = JsonConvert.DeserializeObject<List<Character>>(sr.ReadToEnd());
-                //var truc = JsonConvert.DeserializeXNode(sr.ReadToEnd());
-                //Console.WriteLine(truc);
 
                 if (res != null)
                 {
-                    foreach (Character c in res)
-                    {
-                        RebuildInventory(c);
-                    }
-
                     return res;
                 }
                 return new List<Character>();
             }
         }
 
-        private Character RebuildInventory(Character c)
-        {
-            List<GameObject> newItems = new List<GameObject>();
-            List<GameObject> itemsToRemove = new List<GameObject>();
-
-            foreach (GameObject go in c.Inventory.GetAllGameObjects())
-            {
-                if (go.Name == "Money")
-                {
-                    newItems.Add(new Money(go.Quantity));
-                    itemsToRemove.Add(go);
-                }
-                if (go.Name == "Wood")
-                {
-                    newItems.Add(new Wood(go.Quantity));
-                    itemsToRemove.Add(go);
-                }
-            }
-
-            c.Inventory.RemoveGameObject(itemsToRemove);
-            c.Inventory.AddItems(newItems);
-
-            return c;
-        }
-
         private async Task SaveToFile()
         {
             XmlSerializer serializer = new XmlSerializer(typeof(List<Character>));
-            serializer.Serialize(Console.Out, _characters);
 
             using (StreamWriter sw = new StreamWriter(_filename))
             {

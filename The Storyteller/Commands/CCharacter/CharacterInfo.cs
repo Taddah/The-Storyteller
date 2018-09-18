@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Entities.Tools;
 using The_Storyteller.Models.MCharacter;
+using The_Storyteller.Models.MGameObject;
 
 namespace The_Storyteller.Commands.CCharacter
 {
@@ -129,6 +130,7 @@ namespace The_Storyteller.Commands.CCharacter
 
         public DiscordEmbedBuilder GetPersonalInfo(Character c)
         {
+            Inventory inv = dep.Entities.Inventories.GetInventoryById(c.DiscordID);
             List<CustomEmbedField> attributes = new List<CustomEmbedField>
             {
 
@@ -170,7 +172,7 @@ namespace The_Storyteller.Commands.CCharacter
                     Name = "Inventory",
                     Attributes = new List<string>
                     {
-                        "Money: " + c.Inventory.GetMoney(),
+                        "Money: " + inv.GetMoney(),
                         $"To view your inventory, type {Config.Instance.Prefix}inventory"
                     }
                 }

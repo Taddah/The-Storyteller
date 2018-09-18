@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Models;
 using The_Storyteller.Models.MCharacter;
+using The_Storyteller.Models.MGameObject;
 using The_Storyteller.Models.MMap;
 using The_Storyteller.Models.MVillage;
 using The_Storyteller.Models.MVillage.Buildings;
@@ -44,7 +45,9 @@ namespace The_Storyteller.Commands.CVillage
                 return;
             }
 
-            if (character.Inventory.GetMoney() < 500)
+            Inventory inv = dep.Entities.Inventories.GetInventoryById(character.DiscordID);
+
+            if (inv.GetMoney() < 500)
             {
                 //Trop pauvre pour construire un village ..
                 DiscordEmbedBuilder embedNoMoney = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("createVillageNoMoney", character: character));
@@ -88,7 +91,7 @@ namespace The_Storyteller.Commands.CVillage
             village.KingId = character.DiscordID;
 
             //Coût du village retiré au joueur
-            character.Inventory.RemoveMoney(500);
+            inv.RemoveMoney(500);
             //250 va dans les caisses du villages, le reste servant à la "contructions" des bâtiments de base
             village.Inventory = new VillageInventory();
             village.Inventory.AddMoney(250);

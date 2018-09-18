@@ -135,11 +135,15 @@ namespace The_Storyteller.Commands.CCharacter
                     UpgradePoint = 0
                 };
 
-                c.Inventory = new CharacterInventory();
-                c.Inventory.AddMoney(500);
 
-                c.Inventory.AddItem(new Wood(10));
-                c.Inventory.AddItem(new Weapon("Weapon", 10, 10, 1, 2));
+
+                CharacterInventory inv = new CharacterInventory();
+                inv.Id = c.DiscordID;
+                inv.AddMoney(500);
+                inv.AddItem(new Wood(10));
+                inv.AddItem(new Weapon("Weapon", 10, 10, 1, 2));
+
+                dep.Entities.Inventories.AddInventory(inv);
                 
                 c.OriginRegionName = dep.Entities.Map.GetRegionByLocation(dep.Entities.Guilds.GetGuildById(ctx.Guild.Id).SpawnLocation).Name;
                 c.Profession = Profession.Peasant;
