@@ -30,8 +30,7 @@ namespace The_Storyteller.Commands.CCharacter
         public async Task CharacterInfoCommand(CommandContext ctx, params string[] name)
         {
             //Vérification de base character + guild
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
-                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
+            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id))
             {
                 return;
             }

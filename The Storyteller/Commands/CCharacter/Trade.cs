@@ -121,45 +121,92 @@ namespace The_Storyteller.Commands.CCharacter
                     //3 Ajout d'un item
                     else if (msg.StartsWith($"{Config.Instance.Prefix}add"))
                     {
+                        tradeC1Confirmed = false;
+                        tradeC2Confirmed = false;
                         //a) Nom de l'objet + quantité
                         string[] objectsToAdd = msg.Split(' ');
-                        string itemName = objectsToAdd[1];
-                        int.TryParse(objectsToAdd[2], out int itemCount);
+                        string itemName = "";
 
-                        if (itemCount > 0)
+                        //Prendre quantité et viré de l'array si bien présent
+                        string strCount = objectsToAdd.Last();
+                        if(int.TryParse(strCount, out int itemCount))
+                            objectsToAdd = objectsToAdd.Take(objectsToAdd.Count() - 1).ToArray();
+                        else
+                            itemCount = 1;
+
+                        //Remove commands
+                        objectsToAdd = objectsToAdd.Skip(1).ToArray();
+
+                        //reconstruire nom objet
+                        for (int i = 0; i < objectsToAdd.Length; i++)
                         {
-                            //b) on vérifie si le joueur a bien les items en inventaire
-                            if (tradeMsg.Message.Author.Id == currentCharacter.DiscordID)
+                            itemName += objectsToAdd[i] + " ";
+                        }
+                        itemName = itemName.Remove(itemName.Length - 1);
+                        
+                        //b) on vérifie si le joueur a bien les items en inventaire
+                        if (tradeMsg.Message.Author.Id == currentCharacter.DiscordID)
+                        {
+                            GameObject go = invC1.GetGOAndRemoveFromInventory(itemName, itemCount);
+                            if (go != null)
                             {
-                                GameObject go = invC1.GetGOAndRemoveFromInventory(itemName, itemCount);
-                                if (go != null)
+                                //Si item existe déjà, on additionne les quantité
+                                if (itemFromC1.Exists(item => item.Name == go.Name))
                                 {
-                                    //Si item existe déjà, on additionne les quantité
-                                    if (itemFromC1.Exists(item => item.Name == go.Name))
-                                    {
-                                        itemFromC1.Single(item => item.Name == go.Name).Quantity += go.Quantity;
-                                    }
-                                    else
-                                    {
-                                        itemFromC1.Add(go);
-                                    }
+                                    itemFromC1.Single(item => item.Name == go.Name).Quantity += go.Quantity;
+                                }
+                                else
+                                {
+                                    itemFromC1.Add(go);
                                 }
                             }
-                            else if (tradeMsg.Message.Author.Id == otherCharacter.DiscordID)
+                        }
+                        else if (tradeMsg.Message.Author.Id == otherCharacter.DiscordID)
+                        {
+                            GameObject go = invC2.GetGOAndRemoveFromInventory(itemName, itemCount);
+                            if (go != null)
                             {
-                                GameObject go = invC2.GetGOAndRemoveFromInventory(itemName, itemCount);
-                                if (go != null)
+                                //Si item existe déjà, on additionne les quantité
+                                if (itemFromC2.Exists(item => item.Name == go.Name))
                                 {
-                                    //Si item existe déjà, on additionne les quantité
-                                    if (itemFromC2.Exists(item => item.Name == go.Name))
-                                    {
-                                        itemFromC2.Single(item => item.Name == go.Name).Quantity += go.Quantity;
-                                    }
-                                    else
-                                    {
-                                        itemFromC2.Add(go);
-                                    }
+                                    itemFromC2.Single(item => item.Name == go.Name).Quantity += go.Quantity;
                                 }
+                                else
+                                {
+                                    itemFromC2.Add(go);
+                                }
+                            }
+                        }
+                    }
+                    else if (msg.StartsWith($"{Config.Instance.Prefix}remove"))
+                    {
+                        //a) Nom de l'objet + quantité
+                        string[] objectsToAdd = msg.Split(' ');
+                        string itemName = "";
+
+                        //reconstruire nom objet
+                        for (int i = 1; i < objectsToAdd.Length; i++)
+                        {
+                            itemName += objectsToAdd[i] + " ";
+                        }
+                        itemName = itemName.Remove(itemName.Length - 1);
+
+                        if (tradeMsg.Message.Author.Id == currentCharacter.DiscordID)
+                        {
+                            if (itemFromC1.Exists(item => item.Name.ToLower() == itemName.ToLower()))
+                            {
+                                var objectToRemove = itemFromC1.Single(item => item.Name.ToLower() == itemName.ToLower());
+                                itemFromC1.Remove(objectToRemove);
+                                invC1.AddItem(objectToRemove);
+                            }
+                        }
+                        else if (tradeMsg.Message.Author.Id == otherCharacter.DiscordID)
+                        {
+                            if (itemFromC2.Exists(item => item.Name.ToLower() == itemName.ToLower()))
+                            {
+                                var objectToRemove = itemFromC2.Single(item => item.Name.ToLower() == itemName.ToLower());
+                                itemFromC2.Remove(objectToRemove);
+                                invC2.AddItem(objectToRemove);
                             }
                         }
                     }
@@ -182,15 +229,17 @@ namespace The_Storyteller.Commands.CCharacter
 
                     if (tradeC1Confirmed && tradeC2Confirmed)
                     {
+                        await dmCurrentCharacter.SendMessageAsync("Trade has been made");
+                        await dmOtherCharacter.SendMessageAsync("Trade has been made");
                         invC1.AddItems(itemFromC2);
                         invC2.AddItems(itemFromC1);
+                        tradeIsOver = true;
                     }
-
-
                 }
-
             }
-            //On attend les interactions tant que c'est en cours
+
+            await msg1.DeleteAsync();
+            await msg2.DeleteAsync();
         }
 
         private DiscordEmbedBuilder GetTradeEmbed(CommandContext ctx, string name1, string name2, List<GameObject> itemFromP1, List<GameObject> itemFromP2, bool tradeP1Confirmed = false, bool tradeP2Confirmed = false, bool tradeP1Canceled = false, bool tradeP2Canceled = false)
@@ -252,7 +301,7 @@ namespace The_Storyteller.Commands.CCharacter
             };
 
 
-            string description = $"**{Config.Instance.Prefix}confirm** to confirm, **{Config.Instance.Prefix}cancel** to cancel, **{Config.Instance.Prefix}add [itemName] [quantity]** to add an item to trade";
+            string description = $"**{Config.Instance.Prefix}confirm** to confirm, **{Config.Instance.Prefix}cancel** to cancel, **{Config.Instance.Prefix}add [itemName] [quantity]** to add an item, **{Config.Instance.Prefix}remove [itemName]** to remove an item";
 
             DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes, description: description, inline: true);
 

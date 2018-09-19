@@ -90,15 +90,8 @@ namespace The_Storyteller.Models.MGameObject
 
         public bool HasObjectAndQuantity(GameObject gameObject, int quantity)
         {
-            IEnumerable<GameObject> res = _gameObjects.Where(go => go.GetType() == gameObject.GetType() && go.Quantity >= quantity);
-            if (res == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+           return _gameObjects.Exists(go => go.GetType() == gameObject.GetType() && go.Quantity >= quantity);
+    
         }
 
         public GameObject GetItemByName(string name)
