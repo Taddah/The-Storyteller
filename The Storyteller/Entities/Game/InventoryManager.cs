@@ -24,7 +24,7 @@ namespace The_Storyteller.Entities.Game
             _inventories = LoadFromFile();
 
             Task task = new Task(async () => await DoPeriodicCharacterSave());
-             task.Start();
+            task.Start();
         }
 
         private async Task DoPeriodicCharacterSave()
@@ -70,7 +70,6 @@ namespace The_Storyteller.Entities.Game
                 Inventory inv = new Inventory
                 {
                     Id = id
-
                 };
 
                 foreach (XmlElement obj in inventory.ChildNodes)

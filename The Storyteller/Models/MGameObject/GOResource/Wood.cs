@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using System.Xml.Serialization;
 
 namespace The_Storyteller.Models.MGameObject.GOResource
 {
