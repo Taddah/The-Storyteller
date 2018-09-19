@@ -19,7 +19,7 @@ namespace The_Storyteller.Models.MMap
         public Location Location { get; set; }
         public CaseType Type { get; set; }
         public bool IsAvailable { get; set; }
-        public int VillageId { get; set; }
+        public ulong VillageId { get; set; }
 
         //Character présent sur la map
         public List<ulong> CharacterPresent { get; set; }

@@ -36,8 +36,9 @@ namespace The_Storyteller.Commands.CVillage
             Guild guild = dep.Entities.Guilds.GetGuildById(ctx.Guild.Id);
             Region region = dep.Entities.Map.GetRegionByName(guild.RegionName);
             Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            
 
-            if (region == null || region.GetVillageId() != -1 || !character.Location.Equals(region.GetCentralCase().Location))
+            if (region == null || region.GetVillageId() != ulong.MinValue|| !character.Location.Equals(region.GetCentralCase().Location))
             {
                 //Region n'appartient pas à un serveur, a déjà un village ou case pas adaptée, impossible de construire ici
                 DiscordEmbedBuilder embedNotPossible = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("createVillageNotPossible", character: character, region: region));
@@ -86,15 +87,19 @@ namespace The_Storyteller.Commands.CVillage
             } while (!VillageName);
 
             //2 Nom ok, on créer le village de base
-            village.Id = dep.Entities.Villages.GetVillageCount() + 1;
+            village.Id = ctx.Guild.Id;
             village.RegionName = region.Name;
             village.KingId = character.DiscordID;
 
             //Coût du village retiré au joueur
             inv.RemoveMoney(500);
+
             //250 va dans les caisses du villages, le reste servant à la "contructions" des bâtiments de base
-            village.Inventory = new VillageInventory();
-            village.Inventory.AddMoney(250);
+            Inventory inventory = new VillageInventory();
+            inventory.AddMoney(250);
+            inventory.Id = village.Id;
+            dep.Entities.Inventories.AddInventory(inventory);
+
 
             //Ajout des bâtiment de base
             Castle castle = new Castle()

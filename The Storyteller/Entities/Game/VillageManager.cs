@@ -89,7 +89,7 @@ namespace The_Storyteller.Entities.Game
             }
         }
 
-        public Village GetVillageById(int id)
+        public Village GetVillageById(ulong id)
         {
             return _villages.SingleOrDefault(v => v.Id == id);
         }
@@ -99,7 +99,7 @@ namespace The_Storyteller.Entities.Game
             return _villages.SingleOrDefault(v => v.Name.ToLower() == villageName.ToLower());
         }
 
-        public bool Exists(int id)
+        public bool Exists(ulong id)
         {
             return _villages.Exists(v => v.Id == id);
         }

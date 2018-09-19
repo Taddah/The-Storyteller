@@ -90,6 +90,7 @@ namespace The_Storyteller
             _cnext.RegisterCommands<Commands.CCharacter.Start>();
             _cnext.RegisterCommands<Commands.CCharacter.ShowInventory>();
             _cnext.RegisterCommands<Commands.CCharacter.Trade>();
+            _cnext.RegisterCommands<Commands.CCharacter.JoinVillage>();
 
 
             /////////GUILD COMMANDS
@@ -107,7 +108,6 @@ namespace The_Storyteller
 
             _client.Ready += OnReadyAsync;
             _client.GuildCreated += OnGuildCreated;
-            _client.MessageCreated += OnMessageCreatedAsync;
         }
 
         public void Dispose()
@@ -134,17 +134,6 @@ namespace The_Storyteller
         private async Task OnReadyAsync(ReadyEventArgs e)
         {
             await Task.Yield();
-        }
-
-        private async Task OnMessageCreatedAsync(MessageCreateEventArgs e)
-        {
-            /*
-            if(e.Channel.Id == 486160449709277194)
-            {
-                if (e.Message.Content.Contains("This is the wrong pokémon!"))
-                    await e.Channel.SendMessageAsync("Lel you damned noob, learn pokemon");
-            }
-            */
         }
 
         private async Task OnGuildCreated(GuildCreateEventArgs e)

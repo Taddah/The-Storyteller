@@ -95,7 +95,7 @@ namespace The_Storyteller.Entities.Game
                     {
                         Location = new Location(i, j),
                         IsAvailable = true,
-                        VillageId = -1
+                        VillageId = ulong.MinValue
                     };
 
                     if (r.Type == RegionType.Sea) c.Type = CaseType.Water;

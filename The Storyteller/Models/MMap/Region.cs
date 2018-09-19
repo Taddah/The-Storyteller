@@ -56,16 +56,15 @@ namespace The_Storyteller.Models.MMap
             return null;
         }
 
-        public int GetVillageId()
+        public ulong GetVillageId()
         {
-            var res =  _cases.SingleOrDefault(c => c.VillageId >= 0);
-            if (res == null) return -1;
-            return res.VillageId;
+            var centralCase = GetCentralCase();
+            return centralCase.VillageId;
         }
 
-        public void SetVillageId(int villageId)
+        public void SetVillageId(ulong villageId)
         {
-            if(GetVillageId() == -1)
+            if(GetVillageId() == ulong.MinValue)
             {
                 GetCentralCase().VillageId = villageId;
             }

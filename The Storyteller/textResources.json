@@ -31,7 +31,10 @@
   "createVillageNoMoney": "I am sorry $CHARACTER_NAME but your current wealth is not large enough to start building a new young adventurer village. Try to convince comrades to join you in this adventure to raise the 500 Ecu needed",
   "createVillageNotPossible": "Hey $CHARACTER_NAME, you can't build a village here! Another village is too close or you have to build in $REGION_COORDINATE to be able to accommodate a whole population.",
   "createVillageDone": "Congratulations $CHARACTER_NAME, the village of **$VILLAGE_NAME** has been created and you are now the king. Two basic buildings have been created there and are sufficient to accommodate a small population but a lot of work remains to be done!",
-  "errorNotPartOfVillage": "You are not part of any village. Specify the name of the village if you want information about a particular village.",
+  "errorNotPartOfVillage": "Village not found, be sure you are part of any village or specify the name of the village if you want information about a particular village.",
   "errorCanGoToVillage": "When you arrive at the door, the guard pushes you away. You are not allowed access to this village.",
-  "enterVillage": "You enter the village of $VILLAGE_NAME."
+  "enterVillage": "You enter the village of $VILLAGE_NAME.",
+  "errorCantJoinVillage": "You cannot join this village for one of the following reasons: You are not located in a village or you are already a resident of another village.",
+  "joinVillageMPKing": "My king, someone wishes to join your village. You can consult the list of people who want to join you thanks to the command $PREFIXvillageapplicant"
+
 }

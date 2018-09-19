@@ -130,6 +130,7 @@ namespace The_Storyteller.Commands.CMap
 
             var dm = await ctx.Member.CreateDmChannelAsync();
             await dm.SendMessageAsync(embed: embed);
+            await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
 
         }
     }

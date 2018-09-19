@@ -11,14 +11,16 @@ namespace The_Storyteller.Models.MVillage
         villagers,
         Custom
     }
+
     class Village
     {
-        public int Id { get; set; }
+        public ulong Id { get; set; }
         public string Name { get; set; }
         public string RegionName { get; set; }
         public ulong KingId { get; set; }
         public VillagePermission VillagePermission { get; set; }
-        public VillageInventory Inventory { get; set; }
+        public ulong InventoryId { get; set; }
+        public List<ulong> WaitingList { get; set; }
 
         [JsonProperty("buildings")]
         private List<Building> _buildings { get; set; }
@@ -47,7 +49,7 @@ namespace The_Storyteller.Models.MVillage
             return this._inhabitantId;
         }
 
-        public List<Building> getBuildings()
+        public List<Building> GetBuildings()
         {
             return this._buildings;
         }
