@@ -43,9 +43,9 @@ namespace The_Storyteller.Commands.CCharacter
             // + prévenir roi ?
             Village village = dep.Entities.Villages.GetVillageById(currentCase.VillageId);
             
-            if(!village.WaitingList.Contains(character.DiscordID))
+            if(!village.WaitingList.Contains(character.Id))
             {
-                village.WaitingList.Add(character.DiscordID);
+                village.WaitingList.Add(character.Id);
             }
 
             DiscordMember king = await ctx.Guild.GetMemberAsync(village.KingId);
@@ -53,8 +53,16 @@ namespace The_Storyteller.Commands.CCharacter
             if(king != null)
             {
                 DiscordDmChannel dm = await king.CreateDmChannelAsync();
-                DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("joinVillageMPKing"));
+                DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(king, dep.Dialog.GetString("joinVillageMPKing"));
                 await dm.SendMessageAsync(embed: embed);
+
+                DiscordEmbedBuilder embedConfirm = dep.Embed.CreateBasicEmbed(king, dep.Dialog.GetString("joinvillageConfirmWaiting"));
+                await ctx.RespondAsync(embed: embedConfirm);
+            }
+            else
+            {
+                DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("error"));
+                await ctx.RespondAsync(embed: embed);
             }
         }
     }

@@ -90,16 +90,16 @@ namespace The_Storyteller.Commands.CVillage
             }
 
             List<string> charactersList = new List<string>();
-            foreach (int cId in v.GetInhabitants())
+            foreach (ulong cId in v.GetInhabitants())
             {
-                var c = dep.Entities.Characters.GetCharacterById(cId);
+                var c = dep.Entities.Characters.GetCharacterByDiscordId(cId);
                 charactersList.Add($"{c.Name} - Profession: {c.Profession}");
             }
 
             List<string> buildingList = new List<string>();
             foreach (Building building in v.GetBuildings())
             {
-                var c = dep.Entities.Characters.GetCharacterById(building.ProprietaryId);
+                var c = dep.Entities.Characters.GetCharacterByDiscordId(building.ProprietaryId);
                 buildingList.Add($"{building.Name} - Level: {building.Level} - Proprietary: {c.Name}");
             }
 

@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
 using The_Storyteller.Models.MGameObject.Equipment.Weapons;
-using The_Storyteller.Models.MGameObject.GOResource;
 using The_Storyteller.Models.MGameObject.Others;
+using The_Storyteller.Models.MGameObject.Resources;
 
 namespace The_Storyteller.Models.MGameObject
 {

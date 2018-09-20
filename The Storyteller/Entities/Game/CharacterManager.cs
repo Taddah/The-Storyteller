@@ -7,9 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using The_Storyteller.Models.MCharacter;
-using The_Storyteller.Models.MGameObject;
-using The_Storyteller.Models.MGameObject.GOResource;
-using The_Storyteller.Models.MGameObject.Others;
 
 namespace The_Storyteller.Entities.Game
 {
@@ -90,32 +87,26 @@ namespace The_Storyteller.Entities.Game
 
         public void AddCharacter(Character c)
         {
-            if (!IsPresent(c.DiscordID))
+            if (!IsPresent(c.Id))
             {
                 _characters.Add(c);
-                StartAsyncSave();
             }
         }
 
         public void EditCharacter(Character c)
         {
-            if (IsPresent(c.DiscordID))
+            if (IsPresent(c.Id))
             {
-                Character oldC = GetCharacterByDiscordId(c.DiscordID);
+                Character oldC = GetCharacterByDiscordId(c.Id);
                 oldC = c;
-                StartAsyncSave();
             }
         }
 
         public Character GetCharacterByDiscordId(ulong discordId)
         {
-            return _characters.SingleOrDefault(x => x.DiscordID == discordId);
+            return _characters.SingleOrDefault(x => x.Id == discordId);
         }
 
-        public Character GetCharacterById(int id)
-        {
-            return _characters.SingleOrDefault(x => x.Id == id);
-        }
 
         public Character GetCharacterByTrueName(string trueName)
         {
@@ -129,7 +120,7 @@ namespace The_Storyteller.Entities.Game
 
         public bool IsPresent(ulong id)
         {
-            return _characters.Exists(x => x.DiscordID == id);
+            return _characters.Exists(x => x.Id == id);
         }
 
         public bool IsTrueNameTaken(string surname)
@@ -144,7 +135,7 @@ namespace The_Storyteller.Entities.Game
 
         public void DeleteCharacter(ulong discordId)
         {
-            Character delC = _characters.SingleOrDefault(c => c.DiscordID == discordId);
+            Character delC = _characters.SingleOrDefault(c => c.Id == discordId);
             if (delC != null)
             {
                 _characters.Remove(delC);

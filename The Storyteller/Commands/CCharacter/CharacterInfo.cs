@@ -62,13 +62,8 @@ namespace The_Storyteller.Commands.CCharacter
                 }
                 else
                 {
-                    //Tester par ID
-                    if (int.TryParse(name[0], out int id))
-                    {
-                        c = dep.Entities.Characters.GetCharacterById(id);
-                    }
                     //Tester mention user
-                    else if (dmc.TryConvert(name[0], ctx, out DiscordMember member))
+                    if (dmc.TryConvert(name[0], ctx, out DiscordMember member))
                     {
                         c = dep.Entities.Characters.GetCharacterByDiscordId(member.Id);
                     }
@@ -129,7 +124,7 @@ namespace The_Storyteller.Commands.CCharacter
 
         public DiscordEmbedBuilder GetPersonalInfo(Character c)
         {
-            Inventory inv = dep.Entities.Inventories.GetInventoryById(c.DiscordID);
+            Inventory inv = dep.Entities.Inventories.GetInventoryById(c.Id);
             List<CustomEmbedField> attributes = new List<CustomEmbedField>
             {
 

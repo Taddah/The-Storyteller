@@ -46,7 +46,7 @@ namespace The_Storyteller.Commands.CVillage
                 return;
             }
 
-            Inventory inv = dep.Entities.Inventories.GetInventoryById(character.DiscordID);
+            Inventory inv = dep.Entities.Inventories.GetInventoryById(character.Id);
 
             if (inv.GetMoney() < 500)
             {
@@ -89,7 +89,7 @@ namespace The_Storyteller.Commands.CVillage
             //2 Nom ok, on créer le village de base
             village.Id = ctx.Guild.Id;
             village.RegionName = region.Name;
-            village.KingId = character.DiscordID;
+            village.KingId = character.Id;
 
             //Coût du village retiré au joueur
             inv.RemoveMoney(500);

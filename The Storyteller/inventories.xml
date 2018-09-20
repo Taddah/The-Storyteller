@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inventories>
+  <inventory id="202303964211838986">
+    <object type="money" name="Money" quantity="0" />
+    <object type="wood" name="Wood" quantity="10" />
+    <object type="weapon" name="Awesome sword" quantity="1" attackDamage="10" craftsmanId="100" hand="2" />
+  </inventory>
+  <inventory id="486085214251253760">
+    <object type="money" name="Money" quantity="250" />
+  </inventory>
+  <inventory id="183868579337207809">
+    <object type="money" name="Money" quantity="500" />
+    <object type="wood" name="Wood" quantity="10" />
+    <object type="weapon" name="Awesome sword" quantity="1" attackDamage="10" craftsmanId="100" hand="2" />
+  </inventory>
+</inventories>

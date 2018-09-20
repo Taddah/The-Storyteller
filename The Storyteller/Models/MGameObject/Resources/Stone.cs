@@ -1,19 +1,13 @@
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Xml;
 
-namespace The_Storyteller.Models.MGameObject.GOResource
+namespace The_Storyteller.Models.MGameObject.Resources
 {
-    public class Meat : Resource
+    public class Stone : Resource
     {
 
-        public Meat(int quantity = 0)
+        public Stone(int quantity = 0)
         {
-            Name = "Meat";
+            Name = "Stone";
             Quantity = quantity;
         }
 
@@ -21,17 +15,17 @@ namespace The_Storyteller.Models.MGameObject.GOResource
         {
             if (!int.TryParse(element.GetAttribute("quantity"), out int quantity)) quantity = 0;
 
-                return new Meat
+                return new Stone
                 {
                     Name = element.GetAttribute("name"),
                     Quantity = quantity
                 };
         }
 
-        public override XmlElement Seralize(XmlDocument doc)
+        public override XmlElement Serialize(XmlDocument doc)
         {
             XmlElement element = doc.CreateElement("object");
-            element.SetAttribute("type", "Meat");
+            element.SetAttribute("type", "stone");
             element.SetAttribute("name", this.Name);
             element.SetAttribute("quantity", this.Quantity.ToString());
 

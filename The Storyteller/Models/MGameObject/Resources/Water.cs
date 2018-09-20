@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
 
-namespace The_Storyteller.Models.MGameObject.Others
+namespace The_Storyteller.Models.MGameObject.Resources
 {
-    class Money : GameObject
+    class Water : Resource
     {
-
-        public Money(int quantity = 0)
+        public Water(int quantity = 0)
         {
-            Name = "Money";
+            Name = "Leather";
             Quantity = quantity;
         }
 
@@ -18,7 +14,7 @@ namespace The_Storyteller.Models.MGameObject.Others
         {
             if (!int.TryParse(element.GetAttribute("quantity"), out int quantity)) quantity = 0;
 
-            return new Money
+            return new Water
             {
                 Name = element.GetAttribute("name"),
                 Quantity = quantity
@@ -28,12 +24,11 @@ namespace The_Storyteller.Models.MGameObject.Others
         public override XmlElement Serialize(XmlDocument doc)
         {
             XmlElement element = doc.CreateElement("object");
-            element.SetAttribute("type", "money");
+            element.SetAttribute("type", "water");
             element.SetAttribute("name", this.Name);
             element.SetAttribute("quantity", this.Quantity.ToString());
 
             return element;
         }
-
     }
 }

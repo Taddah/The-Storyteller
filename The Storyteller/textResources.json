@@ -1,6 +1,7 @@
 {
   "male": "gentleman",
   "female": "young lady",
+  "error": "An error occured, please report it.",
   "introduction": "After many journeys, I finally arrived at my destination. However, I do not know this place. Could you introduce me to it?",
   "introductionTypeGen": "To activate the bot in this guild, a region needs to be generated. Please type !registerGuild (only for administrator)",
   "introductionChooseName": "Your steps have led you to an unexplored part of the world! At a glance, I'd say it's a $REGION_TYPE. What would you like to name this region?",
@@ -35,6 +36,7 @@
   "errorCanGoToVillage": "When you arrive at the door, the guard pushes you away. You are not allowed access to this village.",
   "enterVillage": "You enter the village of $VILLAGE_NAME.",
   "errorCantJoinVillage": "You cannot join this village for one of the following reasons: You are not located in a village or you are already a resident of another village.",
-  "joinVillageMPKing": "My king, someone wishes to join your village. You can consult the list of people who want to join you thanks to the command $PREFIXvillageapplicant"
+  "joinVillageMPKing": "My king, someone wishes to join your village. You can consult the list of people who want to join you thanks to the command $PREFIXvillageapplicant",
+  "joinvillageConfirmWaiting": "The King has taken your request into consideration and you will be given an answer shortly."
 
 }

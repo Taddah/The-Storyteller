@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Models.MCharacter;
 using The_Storyteller.Models.MGameObject.Equipment.Weapons;
-using The_Storyteller.Models.MGameObject.GOResource;
+using The_Storyteller.Models.MGameObject.Resources;
 
 namespace The_Storyteller.Commands.CCharacter
 {
@@ -47,7 +47,7 @@ namespace The_Storyteller.Commands.CCharacter
             //Création du Character
             Character c = new Character
             {
-                DiscordID = ctx.Member.Id
+                Id = ctx.Member.Id
             };
 
             //1 On récupère le truename puis on enregistre directement pour éviter les doublons
@@ -138,7 +138,7 @@ namespace The_Storyteller.Commands.CCharacter
 
 
                 CharacterInventory inv = new CharacterInventory();
-                inv.Id = c.DiscordID;
+                inv.Id = c.Id;
                 inv.AddMoney(500);
                 inv.AddItem(new Wood(10));
                 inv.AddItem(new Weapon()
@@ -154,15 +154,17 @@ namespace The_Storyteller.Commands.CCharacter
                 
                 c.OriginRegionName = dep.Entities.Map.GetRegionByLocation(dep.Entities.Guilds.GetGuildById(ctx.Guild.Id).SpawnLocation).Name;
                 c.Profession = Profession.Peasant;
-
-                c.Id = dep.Entities.Characters.GetCount();
+                
                 dep.Entities.Map.GetCase(c.Location).AddNewCharacter(c);
                 dep.Entities.Characters.EditCharacter(c);
+
+                //Rajout discordMember
+                dep.Entities.DiscordMembers.AddDiscordMember(ctx.Member);
             }
             //Sinon on supprime celui qui avait commencé à être créer
             else
             {
-                dep.Entities.Characters.DeleteCharacter(c.DiscordID);
+                dep.Entities.Characters.DeleteCharacter(c.Id);
             }
         }
     }

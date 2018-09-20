@@ -30,7 +30,7 @@ namespace The_Storyteller.Commands.CCharacter
 
             //1 Récupérer le Character et son inventaire
             Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
-            Inventory inventory = dep.Entities.Inventories.GetInventoryById(character.DiscordID);
+            Inventory inventory = dep.Entities.Inventories.GetInventoryById(character.Id);
 
             List<string> resourceList = new List<string>();
             foreach (GameObject go in inventory.GetResources())

@@ -42,8 +42,8 @@ namespace The_Storyteller.Commands.CCharacter
             Character otherCharacter = dep.Entities.Characters.GetCharacterByDiscordId(member.Id);
 
             //Les deux inventaires
-            Inventory invC1 = dep.Entities.Inventories.GetInventoryById(currentCharacter.DiscordID);
-            Inventory invC2 = dep.Entities.Inventories.GetInventoryById(otherCharacter.DiscordID);
+            Inventory invC1 = dep.Entities.Inventories.GetInventoryById(currentCharacter.Id);
+            Inventory invC2 = dep.Entities.Inventories.GetInventoryById(otherCharacter.Id);
 
             //Liste des items à échanger
             List<GameObject> itemFromC1 = new List<GameObject>();
@@ -85,8 +85,8 @@ namespace The_Storyteller.Commands.CCharacter
 
                 //Attendre message d'un des deux dans le DM
                 MessageContext tradeMsg = await interactivity.WaitForMessageAsync(xm =>
-                (xm.Author.Id == currentCharacter.DiscordID && xm.ChannelId == dmCurrentCharacter.Id)
-                || (xm.Author.Id == otherCharacter.DiscordID && xm.ChannelId == dmOtherCharacter.Id)
+                (xm.Author.Id == currentCharacter.Id && xm.ChannelId == dmCurrentCharacter.Id)
+                || (xm.Author.Id == otherCharacter.Id && xm.ChannelId == dmOtherCharacter.Id)
                 , TimeSpan.FromSeconds(30));
 
                 if (tradeMsg != null)
@@ -95,11 +95,11 @@ namespace The_Storyteller.Commands.CCharacter
                     //1 Echange accepté
                     if (msg == $"{Config.Instance.Prefix}confirm")
                     {
-                        if (tradeMsg.Message.Author.Id == currentCharacter.DiscordID)
+                        if (tradeMsg.Message.Author.Id == currentCharacter.Id)
                         {
                             tradeC1Confirmed = true;
                         }
-                        else if (tradeMsg.Message.Author.Id == otherCharacter.DiscordID)
+                        else if (tradeMsg.Message.Author.Id == otherCharacter.Id)
                         {
                             tradeC2Confirmed = true;
                         }
@@ -107,12 +107,12 @@ namespace The_Storyteller.Commands.CCharacter
                     // 2 Echangé refusé
                     else if (msg == $"{Config.Instance.Prefix}cancel")
                     {
-                        if (tradeMsg.Message.Author.Id == currentCharacter.DiscordID)
+                        if (tradeMsg.Message.Author.Id == currentCharacter.Id)
                         {
                             tradeC1Confirmed = false;
                             tradeC1Canceled = true;
                         }
-                        else if (tradeMsg.Message.Author.Id == otherCharacter.DiscordID)
+                        else if (tradeMsg.Message.Author.Id == otherCharacter.Id)
                         {
                             tradeC2Confirmed = false;
                             tradeC2Canceled = true;
@@ -145,7 +145,7 @@ namespace The_Storyteller.Commands.CCharacter
                         itemName = itemName.Remove(itemName.Length - 1);
                         
                         //b) on vérifie si le joueur a bien les items en inventaire
-                        if (tradeMsg.Message.Author.Id == currentCharacter.DiscordID)
+                        if (tradeMsg.Message.Author.Id == currentCharacter.Id)
                         {
                             GameObject go = invC1.GetGOAndRemoveFromInventory(itemName, itemCount);
                             if (go != null)
@@ -161,7 +161,7 @@ namespace The_Storyteller.Commands.CCharacter
                                 }
                             }
                         }
-                        else if (tradeMsg.Message.Author.Id == otherCharacter.DiscordID)
+                        else if (tradeMsg.Message.Author.Id == otherCharacter.Id)
                         {
                             GameObject go = invC2.GetGOAndRemoveFromInventory(itemName, itemCount);
                             if (go != null)
@@ -191,7 +191,7 @@ namespace The_Storyteller.Commands.CCharacter
                         }
                         itemName = itemName.Remove(itemName.Length - 1);
 
-                        if (tradeMsg.Message.Author.Id == currentCharacter.DiscordID)
+                        if (tradeMsg.Message.Author.Id == currentCharacter.Id)
                         {
                             if (itemFromC1.Exists(item => item.Name.ToLower() == itemName.ToLower()))
                             {
@@ -200,7 +200,7 @@ namespace The_Storyteller.Commands.CCharacter
                                 invC1.AddItem(objectToRemove);
                             }
                         }
-                        else if (tradeMsg.Message.Author.Id == otherCharacter.DiscordID)
+                        else if (tradeMsg.Message.Author.Id == otherCharacter.Id)
                         {
                             if (itemFromC2.Exists(item => item.Name.ToLower() == itemName.ToLower()))
                             {

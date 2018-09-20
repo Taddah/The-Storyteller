@@ -13,7 +13,7 @@ namespace The_Storyteller.Models.MGameObject.Equipment.Weapons
         public int CraftsmanId { get; set; }
         public int Hand { get; set; }
 
-        public override XmlElement Seralize(XmlDocument doc)
+        public override XmlElement Serialize(XmlDocument doc)
         {
             XmlElement element = doc.CreateElement("object");
             element.SetAttribute("type", "weapon");

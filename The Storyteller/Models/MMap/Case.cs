@@ -47,7 +47,7 @@ namespace The_Storyteller.Models.MMap
         public void AddNewCharacter(Character c)
         {
             if (CharacterPresent == null) return;
-            CharacterPresent.Add(c.DiscordID);
+            CharacterPresent.Add(c.Id);
         }
 
         public List<ulong> GetCharactersOnCase()
@@ -58,7 +58,7 @@ namespace The_Storyteller.Models.MMap
         public void RemoveCharacter(Character c)
         {
             if (CharacterPresent == null) return;
-            CharacterPresent.Remove(c.DiscordID);
+            CharacterPresent.Remove(c.Id);
         }
     }
 

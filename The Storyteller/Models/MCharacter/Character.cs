@@ -1,8 +1,4 @@
-﻿using System.Xml.Serialization;
-using The_Storyteller.Models.MGameObject.Equipment.Weapons;
-using The_Storyteller.Models.MGameObject.GOResource;
-using The_Storyteller.Models.MMap;
-using The_Storyteller.Models.MVillage;
+﻿using The_Storyteller.Models.MMap;
 
 namespace The_Storyteller.Models.MCharacter
 {
@@ -21,8 +17,7 @@ namespace The_Storyteller.Models.MCharacter
 
     public class Character
     {
-        public int Id { get; set; }
-        public ulong DiscordID { get; set; }
+        public ulong Id { get; set; }
         public string Name { get; set; }
         public string TrueName { get; set; }
         public Sex Sex { get; set; }

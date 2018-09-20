@@ -1,27 +1,21 @@
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Xml;
 
-namespace The_Storyteller.Models.MGameObject.GOResource
+namespace The_Storyteller.Models.MGameObject.Resources
 {
-    public class Iron : Ore
+    public class Sand : Resource
     {
 
-        public Iron(int quantity = 0)
+        public Sand(int quantity = 0)
         {
-            Name = "Iron";
+            Name = "Sand";
             Quantity = quantity;
         }
 
-        public override new static GameObject Build(XmlElement element)
+        public new static GameObject Build(XmlElement element)
         {
             if (!int.TryParse(element.GetAttribute("quantity"), out int quantity)) quantity = 0;
 
-                return new Wood
+                return new Sand
                 {
                     Name = element.GetAttribute("name"),
                     Quantity = quantity
@@ -31,7 +25,7 @@ namespace The_Storyteller.Models.MGameObject.GOResource
         public override XmlElement Serialize(XmlDocument doc)
         {
             XmlElement element = doc.CreateElement("object");
-            element.SetAttribute("type", "iron");
+            element.SetAttribute("type", "sand");
             element.SetAttribute("name", this.Name);
             element.SetAttribute("quantity", this.Quantity.ToString());
 

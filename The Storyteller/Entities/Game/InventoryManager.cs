@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using System.Xml;
 using The_Storyteller.Models.MGameObject;
 using The_Storyteller.Models.MGameObject.Equipment.Weapons;
-using The_Storyteller.Models.MGameObject.GOResource;
+using The_Storyteller.Models.MGameObject.Resources;
 using The_Storyteller.Models.MGameObject.Others;
+using The_Storyteller.Models.MGameObject.Resources.Ore;
 
 namespace The_Storyteller.Entities.Game
 {
@@ -95,7 +96,7 @@ namespace The_Storyteller.Entities.Game
 
                 foreach (GameObject go in inv.GetAllGameObjects())
                 {
-                    XmlElement xmlGo = go.Seralize(doc);
+                    XmlElement xmlGo = go.Serialize(doc);
                     inventory1.AppendChild(xmlGo);
                 }
 
@@ -121,6 +122,17 @@ namespace The_Storyteller.Entities.Game
                 case "money": return Money.Build(element);
                 case "wood": return Wood.Build(element);
                 case "weapon": return Weapon.Build(element);
+                case "coal": return Coal.Build(element);
+                case "copper": return Copper.Build(element);
+                case "gold": return Gold.Build(element);
+                case "iron": return Iron.Build(element);
+                case "silver": return Silver.Build(element);
+                case "leather": return Leather.Build(element);
+                case "meat": return Meat.Build(element);
+                case "sand": return Sand.Build(element);
+                case "stone": return Stone.Build(element);
+                case "water": return Water.Build(element);
+                case "wheat": return Wheat.Build(element);
                 default: return null;
             }
         }

@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 
-namespace The_Storyteller.Models.MGameObject.Others
+namespace The_Storyteller.Models.MGameObject.Resources.Ore
 {
-    class Money : GameObject
+    public class Copper : Ore
     {
 
-        public Money(int quantity = 0)
+        public Copper(int quantity = 0)
         {
-            Name = "Money";
+            Name = "Copper";
             Quantity = quantity;
         }
 
@@ -18,7 +15,7 @@ namespace The_Storyteller.Models.MGameObject.Others
         {
             if (!int.TryParse(element.GetAttribute("quantity"), out int quantity)) quantity = 0;
 
-            return new Money
+            return new Copper
             {
                 Name = element.GetAttribute("name"),
                 Quantity = quantity
@@ -28,12 +25,11 @@ namespace The_Storyteller.Models.MGameObject.Others
         public override XmlElement Serialize(XmlDocument doc)
         {
             XmlElement element = doc.CreateElement("object");
-            element.SetAttribute("type", "money");
+            element.SetAttribute("type", "copper");
             element.SetAttribute("name", this.Name);
             element.SetAttribute("quantity", this.Quantity.ToString());
 
             return element;
         }
-
     }
 }

@@ -26,12 +26,13 @@ namespace The_Storyteller.Models.MVillage
         private List<Building> _buildings { get; set; }
 
         [JsonProperty("inhabitantId")]
-        private List<int> _inhabitantId { get; set; }
+        private List<ulong> _inhabitantId { get; set; }
 
         public Village()
         {
             _buildings = new List<Building>();
-            _inhabitantId = new List<int>();
+            _inhabitantId = new List<ulong>();
+            WaitingList = new List<ulong>();
         }
 
         public void AddBuilding(Building b)
@@ -41,10 +42,11 @@ namespace The_Storyteller.Models.MVillage
 
         public void AddInhabitant(Character c)
         {
+            c.VillageName = Name;
             _inhabitantId.Add(c.Id);
         }
 
-        public List<int> GetInhabitants()
+        public List<ulong> GetInhabitants()
         {
             return this._inhabitantId;
         }
