@@ -21,39 +21,45 @@ namespace The_Storyteller.Models.MVillage
         public VillagePermission VillagePermission { get; set; }
         public ulong InventoryId { get; set; }
         public List<ulong> WaitingList { get; set; }
-
-        [JsonProperty("buildings")]
-        private List<Building> _buildings { get; set; }
-
-        [JsonProperty("inhabitantId")]
-        private List<ulong> _inhabitantId { get; set; }
+        
+        public List<Building> Buildings { get; set; }
+        
+        public List<ulong> Villagers { get; set; }
 
         public Village()
         {
-            _buildings = new List<Building>();
-            _inhabitantId = new List<ulong>();
+            Buildings = new List<Building>();
+            Villagers = new List<ulong>();
             WaitingList = new List<ulong>();
         }
 
         public void AddBuilding(Building b)
         {
-            _buildings.Add(b);
+            Buildings.Add(b);
         }
 
         public void AddInhabitant(Character c)
         {
             c.VillageName = Name;
-            _inhabitantId.Add(c.Id);
+            c.Profession = Profession.Villager;
+            Villagers.Add(c.Id);
+        }
+
+        public void RemoveVillager(Character c)
+        {
+            c.VillageName = null;
+            c.Profession = Profession.Peasant;
+            Villagers.Remove(c.Id);
         }
 
         public List<ulong> GetInhabitants()
         {
-            return this._inhabitantId;
+            return this.Villagers;
         }
 
         public List<Building> GetBuildings()
         {
-            return this._buildings;
+            return this.Buildings;
         }
     }
 }

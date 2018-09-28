@@ -12,7 +12,6 @@ namespace The_Storyteller.Commands.CMap
     /// <summary>
     /// TODO
     /// Commande qui retourne des informations sur une case en particuler
-    /// (Type de case, région associé, si contient village ..)
     /// </summary>
     internal class CaseInfo
     {
@@ -39,7 +38,7 @@ namespace The_Storyteller.Commands.CMap
             //1 genral information
             List<string> genInfo = new List<string>()
                     {
-                        "Case type: " + currentCase.Type,
+                        "Case type: " + currentCase.GetTypeOfCase(),
                         "Location: " + currentCase.Location,
                         "Region: " + currentRegion.Name
                     };
@@ -68,7 +67,7 @@ namespace The_Storyteller.Commands.CMap
             var northCase = dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition, currentCase.Location.YPosition + 1));
             if (northCase != null)
             {
-                caseInfo.Add($"North {northCase.Location} - {northCase.Type}");
+                caseInfo.Add($"North {northCase.Location} - {northCase.GetTypeOfCase()}");
             }
             else
             {
@@ -78,7 +77,7 @@ namespace The_Storyteller.Commands.CMap
             var southCase = dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition, currentCase.Location.YPosition - 1));
             if (southCase != null)
             {
-                caseInfo.Add($"South {southCase.Location} - {southCase.Type}");
+                caseInfo.Add($"South {southCase.Location} - {southCase.GetTypeOfCase()}");
             }
             else
             {
@@ -88,7 +87,7 @@ namespace The_Storyteller.Commands.CMap
             var eastCase = dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition + 1, currentCase.Location.YPosition));
             if (eastCase != null)
             {
-                caseInfo.Add($"East {eastCase.Location} - {eastCase.Type}");
+                caseInfo.Add($"East {eastCase.Location} - {eastCase.GetTypeOfCase()}");
             }
             else
             {
@@ -98,7 +97,7 @@ namespace The_Storyteller.Commands.CMap
             var westCase = dep.Entities.Map.GetCase(new Location(currentCase.Location.XPosition - 1, currentCase.Location.YPosition));
             if (westCase != null)
             {
-                caseInfo.Add($"West {westCase.Location} - {westCase.Type}");
+                caseInfo.Add($"West {westCase.Location} - {westCase.GetTypeOfCase()}");
             }
             else
             {

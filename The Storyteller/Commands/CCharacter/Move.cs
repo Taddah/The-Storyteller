@@ -9,6 +9,7 @@ using The_Storyteller.Entities.Game;
 using The_Storyteller.Entities.Tools;
 using The_Storyteller.Models.MCharacter;
 using The_Storyteller.Models.MMap;
+using The_Storyteller.Models.MMap.MCase;
 using The_Storyteller.Models.MVillage;
 
 namespace The_Storyteller.Commands.CCharacter
@@ -129,14 +130,14 @@ namespace The_Storyteller.Commands.CCharacter
             Case newCase = newRegion.GetCase(newLocation);
 
             //Eau, impossible d'y aller (pour le moment)
-            if (newCase.Type == CaseType.Water)
+            if (newCase is WaterCase)
             {
                 DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("errorDirectionWater"));
                 await ctx.RespondAsync(embed: embed);
                 return;
             }
             //Village, à voir selon le type d'accès
-            else if (newCase.Type == CaseType.Village)
+            else if (newCase is VillageCase)
             {
                 Village village = dep.Entities.Villages.GetVillageById(newCase.VillageId);
                 //Ne peut pas aller dans le village

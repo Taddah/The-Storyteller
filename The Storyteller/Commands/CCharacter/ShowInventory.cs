@@ -10,6 +10,10 @@ using The_Storyteller.Models.MGameObject;
 
 namespace The_Storyteller.Commands.CCharacter
 {
+    /// <summary>
+    /// Affiche l'inventaire du joueur en PM
+    /// Classé selon diverses catégories
+    /// </summary>
     class ShowInventory
     {
         private readonly Dependencies dep;

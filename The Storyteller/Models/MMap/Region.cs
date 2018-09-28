@@ -56,6 +56,12 @@ namespace The_Storyteller.Models.MMap
             return null;
         }
 
+        public void SetCentralCase(Case c)
+        {
+            if (_cases.Count > 0 && _cases.Count == GetSize() * GetSize())
+                _cases[(int)Math.Floor((decimal)(GetSize() * GetSize()) / 2)] = c;
+        }
+
         public ulong GetVillageId()
         {
             var centralCase = GetCentralCase();

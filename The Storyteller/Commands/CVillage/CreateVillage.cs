@@ -9,11 +9,16 @@ using The_Storyteller.Models;
 using The_Storyteller.Models.MCharacter;
 using The_Storyteller.Models.MGameObject;
 using The_Storyteller.Models.MMap;
+using The_Storyteller.Models.MMap.MCase;
 using The_Storyteller.Models.MVillage;
 using The_Storyteller.Models.MVillage.Buildings;
 
 namespace The_Storyteller.Commands.CVillage
 {
+    /// <summary>
+    /// Création d'un village, le coût est de 500 et devrait être défni autrement qu'en dur ...
+    /// bref à faire
+    /// </summary>
     class CreateVillage
     {
         private readonly Dependencies dep;
@@ -130,7 +135,7 @@ namespace The_Storyteller.Commands.CVillage
 
             //Case de la région mise en non valable
             region.GetCentralCase().IsAvailable = false;
-            region.GetCentralCase().Type = CaseType.Village;
+            region.SetCentralCase(CaseFactory.BuildCase("village", region.GetCentralCase().Location));
 
             dep.Entities.Villages.AddVillage(village);
 

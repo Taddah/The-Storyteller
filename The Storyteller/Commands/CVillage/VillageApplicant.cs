@@ -13,6 +13,10 @@ using The_Storyteller.Models.MCharacter;
 
 namespace The_Storyteller.Commands.CVillage
 {
+    /// <summary>
+    /// Seulement pour le roi
+    /// Affiche la liste des demandes en attentes avec possibilité de les accepter ou non
+    /// </summary>
     class VillageApplicant
     {
         private readonly Dependencies dep;
@@ -72,14 +76,12 @@ namespace The_Storyteller.Commands.CVillage
                     var command = message[0];
                     message = message.Skip(1).ToArray();
 
-                    var name = "";
-                    foreach (string s in message)
-                        name += s + " ";
-                    name = name.Remove(name.Length - 1);
+                    var name = string.Join(" ", message);
 
                     var applicant = dep.Entities.Characters.GetCharacterByName(name);
-                    var applicantDiscordMember = dep.Entities.DiscordMembers.GetDiscordMemberById(applicant.Id);
-                    var dmApplicant = await applicantDiscordMember.CreateDmChannelAsync();
+
+                    var applicantDiscordMember = await ctx.Client.GetUserAsync(applicant.Id);
+                    var dmApplicant = await ctx.Client.CreateDmAsync(applicantDiscordMember);
 
                     if (applicant == null)
                     {

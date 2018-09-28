@@ -13,6 +13,9 @@ using The_Storyteller.Models.MGameObject;
 
 namespace The_Storyteller.Commands.CCharacter
 {
+    /// <summary>
+    /// Permet d'échanger des items entre 2 joueurs par PM
+    /// </summary>
     class Trade
     {
         private readonly Dependencies dep;

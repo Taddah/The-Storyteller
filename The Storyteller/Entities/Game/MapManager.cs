@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using The_Storyteller.Models.MMap;
-using CaseType = The_Storyteller.Models.MMap.CaseType;
+using The_Storyteller.Models.MMap.MCase;
 
 namespace The_Storyteller.Entities.Game
 {
@@ -76,8 +76,7 @@ namespace The_Storyteller.Entities.Game
                 Id = id,
                 Type = regionType
             };
-
-            var values = Enum.GetValues(typeof(CaseType));
+            
 
             if(centralCase ==  null)
                 centralCase = GetRandomNextCentralCase();
@@ -91,29 +90,24 @@ namespace The_Storyteller.Entities.Game
             {
                 for (var j = baseY; j <= endY; j++)
                 {
-                    var c = new Case
-                    {
-                        Location = new Location(i, j),
-                        IsAvailable = true,
-                        VillageId = ulong.MinValue
-                    };
-
-                    if (r.Type == RegionType.Sea) c.Type = CaseType.Water;
-                    else if (r.Type == RegionType.Desert) c.Type = CaseType.Desert;
-                    else if(r.Type == RegionType.Mountain)
+                    Case c;
+                    
+                    if (r.Type == RegionType.Sea) c = CaseFactory.BuildCase("water", new Location(i, j));
+                    else if (r.Type == RegionType.Desert) c = CaseFactory.BuildCase("desert", new Location(i, j));
+                    else if (r.Type == RegionType.Mountain)
                     {
                         var rndValue = random.Next(1, 10);
-                        if(rndValue < 2) c.Type = CaseType.Water;
-                        else if(rndValue < 4) c.Type = CaseType.Land;
-                        else if (rndValue < 6) c.Type = CaseType.Forest;
-                        else c.Type = CaseType.Mountain;
+                        if (rndValue < 2) c = CaseFactory.BuildCase("water", new Location(i, j));
+                        else if (rndValue < 4) c = CaseFactory.BuildCase("land", new Location(i, j));
+                        else if (rndValue < 6) c = CaseFactory.BuildCase("forest", new Location(i, j));
+                        else c = CaseFactory.BuildCase("mountain", new Location(i, j));
                     }
                     else
                     {
                         var rndValue = random.Next(1, 10);
-                        if (rndValue < 3) c.Type = CaseType.Water;
-                        else if (rndValue < 6) c.Type = CaseType.Forest;
-                        else c.Type = CaseType.Land;
+                        if (rndValue < 3) c = CaseFactory.BuildCase("water", new Location(i, j));
+                        else if (rndValue < 6) c = CaseFactory.BuildCase("forest", new Location(i, j));
+                        c = CaseFactory.BuildCase("land", new Location(i, j));
                     }
                     r.AddCase(c);
                 }
@@ -121,7 +115,7 @@ namespace The_Storyteller.Entities.Game
 
             //Force this region to have a valid central case
             if (forceValable)
-                r.GetCentralCase().Type = CaseType.Land;
+                r.SetCentralCase(CaseFactory.BuildCase("land", r.GetCentralCase().Location));
 
             _regions.Add(r);
             SaveToFile();

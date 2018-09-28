@@ -12,6 +12,10 @@ using The_Storyteller.Models.MVillage;
 
 namespace The_Storyteller.Commands.CVillage
 {
+    /// <summary>
+    /// Group de commandes, affiche les infos sur le village
+    /// Par la suite, détails des villageois, buildings, etc ...
+    /// </summary>
     [Group("villageinfo", CanInvokeWithoutSubcommand = true)]
     class VillageInfo
     {
@@ -38,10 +42,7 @@ namespace The_Storyteller.Commands.CVillage
             
             if (name.Length > 0)
             {
-                villageName = "";
-                foreach (string s in name)
-                    villageName += s + " ";
-                villageName = villageName.Remove(villageName.Length - 1);
+                villageName = string.Join(" ", name);
                 detailled = false;
 
             }

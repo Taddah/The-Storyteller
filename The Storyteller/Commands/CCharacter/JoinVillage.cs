@@ -9,6 +9,11 @@ using The_Storyteller.Models.MVillage;
 
 namespace The_Storyteller.Commands.CCharacter
 {
+    /// <summary>
+    /// Rejoindre un village, le joueur qui le demande
+    /// est placé sur la liste d'attente du village
+    /// Sa demande doit ensuite être validé ou non par le roi
+    /// </summary>
     internal class JoinVillage
     {
         private readonly Dependencies dep;

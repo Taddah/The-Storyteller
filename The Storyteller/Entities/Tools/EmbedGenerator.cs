@@ -6,13 +6,13 @@ namespace The_Storyteller.Entities.Tools
 {
     internal class EmbedGenerator
     {
-        public DiscordEmbedBuilder CreateBasicEmbed(DiscordMember memberTarget, string mainText, string optionalText = "", bool withPicture = false)
+        public DiscordEmbedBuilder CreateBasicEmbed(DiscordUser memberTarget, string mainText, string optionalText = "", bool withPicture = false)
         {
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder
             {
                 Description = mainText,
                 Color = Config.Instance.Color,
-                Title = memberTarget.DisplayName
+                Title = memberTarget.Username
             };
 
             if (optionalText.Length > 0)

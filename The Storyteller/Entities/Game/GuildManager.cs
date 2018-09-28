@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using DSharpPlus.Entities;
 using Newtonsoft.Json;
 using The_Storyteller.Models;
 
@@ -52,7 +54,7 @@ namespace The_Storyteller.Entities.Game
 
         public Guild GetGuildById(ulong id)
         {
-            return _guilds.Find(x => x.Id == id);
+            return _guilds.SingleOrDefault(x => x.Id == id);
         }
 
         public bool IsPresent(ulong id)

@@ -15,7 +15,6 @@ namespace The_Storyteller.Entities
             Map = new MapManager("map.json");
             Villages = new VillageManager("villages.json");
             Inventories = new InventoryManager("inventories.xml");
-            DiscordMembers = new DiscordMemberManager("discordMembers.json");
         }
 
         public CharacterManager Characters { get; set; }
@@ -23,6 +22,5 @@ namespace The_Storyteller.Entities
         public MapManager Map { get; set; }
         public VillageManager Villages { get; set; }
         public InventoryManager Inventories { get; set; }
-        public DiscordMemberManager DiscordMembers { get; set; }
     }
 }

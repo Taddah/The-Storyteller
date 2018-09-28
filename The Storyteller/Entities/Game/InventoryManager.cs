@@ -13,6 +13,12 @@ using The_Storyteller.Models.MGameObject.Resources.Ore;
 
 namespace The_Storyteller.Entities.Game
 {
+    /// <summary>
+    /// Gestionnaire d'inventaire, la sauvegarde est en xml pour le moment et écrire à la main
+    /// Afin de gérer la liste d'abstract
+    /// Classe équipé d'une factory à modifier à chauque ajout d'un nouveau Gameobject afin de pouvoir reconstruire
+    /// l'object correment depuis le fichier de sauvegarde
+    /// </summary>
     class InventoryManager
     {
         private readonly string _filename;

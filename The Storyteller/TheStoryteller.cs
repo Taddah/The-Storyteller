@@ -91,6 +91,7 @@ namespace The_Storyteller
             _cnext.RegisterCommands<Commands.CCharacter.ShowInventory>();
             _cnext.RegisterCommands<Commands.CCharacter.Trade>();
             _cnext.RegisterCommands<Commands.CCharacter.JoinVillage>();
+            _cnext.RegisterCommands<Commands.CCharacter.LeaveVillage>();
 
 
             /////////GUILD COMMANDS
@@ -105,6 +106,7 @@ namespace The_Storyteller
             _cnext.RegisterCommands<Commands.CVillage.CreateVillage>();
             _cnext.RegisterCommands<Commands.CVillage.VillageInfo>();
             _cnext.RegisterCommands<Commands.CVillage.VillageApplicant>();
+            _cnext.RegisterCommands<Commands.CVillage.FiringVillager>();
 
 
             _client.Ready += OnReadyAsync;

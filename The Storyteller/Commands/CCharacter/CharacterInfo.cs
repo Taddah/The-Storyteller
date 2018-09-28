@@ -90,12 +90,7 @@ namespace The_Storyteller.Commands.CCharacter
             }
 
             //Reconstruction du nom
-            foreach (string s in name)
-            {
-                strName += s + " ";
-            }
-
-            strName = strName.Remove(strName.Length - 1);
+            strName = string.Join(" ", name);
 
 
             c = dep.Entities.Characters.GetCharacterByTrueName(strName);

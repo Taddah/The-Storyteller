@@ -137,8 +137,10 @@ namespace The_Storyteller.Commands.CCharacter
 
 
 
-                CharacterInventory inv = new CharacterInventory();
-                inv.Id = c.Id;
+                CharacterInventory inv = new CharacterInventory
+                {
+                    Id = c.Id
+                };
                 inv.AddMoney(500);
                 inv.AddItem(new Wood(10));
                 inv.AddItem(new Weapon()
@@ -157,9 +159,6 @@ namespace The_Storyteller.Commands.CCharacter
                 
                 dep.Entities.Map.GetCase(c.Location).AddNewCharacter(c);
                 dep.Entities.Characters.EditCharacter(c);
-
-                //Rajout discordMember
-                dep.Entities.DiscordMembers.AddDiscordMember(ctx.Member);
             }
             //Sinon on supprime celui qui avait commencé à être créer
             else

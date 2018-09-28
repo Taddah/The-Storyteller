@@ -28,9 +28,7 @@ namespace The_Storyteller.Commands.CMap
 
             if (name.Length > 0)
             {
-                var strName = "";
-                foreach (string s in name) strName += s + " ";
-                strName = strName.Remove(strName.Length - 1);
+                var strName = string.Join(" ", name);
                 r = dep.Entities.Map.GetRegionByName(strName);
             }
             else
