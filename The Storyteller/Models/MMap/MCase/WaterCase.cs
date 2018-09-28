@@ -17,7 +17,7 @@ namespace The_Storyteller.Models.MMap.MCase
 
         public override string GetTypeOfCase()
         {
-            return "Sea";
+            return "Water";
         }
     }
 }

@@ -81,7 +81,7 @@ namespace The_Storyteller.Entities.Game
 
                 foreach (XmlElement obj in inventory.ChildNodes)
                 {
-                    GameObject gameObject = BuildGameObject(obj);
+                    GameObject gameObject = GameObjectFactory.BuildGameObject(obj);
                     inv.AddItem(gameObject);
                 }
                 listInv.Add(inv);
@@ -118,29 +118,6 @@ namespace The_Storyteller.Entities.Game
                     doc.Save(sw);
                 }
             });
-        }
-
-        public GameObject BuildGameObject(XmlElement element)
-        {
-            string type = element.GetAttribute("type");
-            switch (type)
-            {
-                case "money": return Money.Build(element);
-                case "wood": return Wood.Build(element);
-                case "weapon": return Weapon.Build(element);
-                case "coal": return Coal.Build(element);
-                case "copper": return Copper.Build(element);
-                case "gold": return Gold.Build(element);
-                case "iron": return Iron.Build(element);
-                case "silver": return Silver.Build(element);
-                case "leather": return Leather.Build(element);
-                case "meat": return Meat.Build(element);
-                case "sand": return Sand.Build(element);
-                case "stone": return Stone.Build(element);
-                case "water": return Water.Build(element);
-                case "wheat": return Wheat.Build(element);
-                default: return null;
-            }
         }
 
         public Inventory GetInventoryById(ulong id)

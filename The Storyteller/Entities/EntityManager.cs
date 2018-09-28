@@ -12,7 +12,7 @@ namespace The_Storyteller.Entities
         {
             Guilds = new GuildManager("guilds.json");
             Characters = new CharacterManager("characters.json");
-            Map = new MapManager("map.json");
+            Map = new MapManager("map.xml");
             Villages = new VillageManager("villages.json");
             Inventories = new InventoryManager("inventories.xml");
         }

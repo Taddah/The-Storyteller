@@ -6,7 +6,7 @@ namespace The_Storyteller.Models.MGameObject.Resources
     {
         public Water(int quantity = 0)
         {
-            Name = "Leather";
+            Name = "Water";
             Quantity = quantity;
         }
 

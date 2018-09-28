@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Xml;
 using The_Storyteller.Models.MCharacter;
 using The_Storyteller.Models.MGameObject.Resources;
-using The_Storyteller.Models.MVillage;
 
 namespace The_Storyteller.Models.MMap
 {
@@ -14,11 +14,11 @@ namespace The_Storyteller.Models.MMap
         public List<Resource> Resources { get; set; }
 
         //Character présent sur la map
-        public List<ulong> CharacterPresent { get; set; }
+        public List<ulong> CharactersPresent { get; set; }
 
         public Case()
         {
-            CharacterPresent = new List<ulong>();
+            CharactersPresent = new List<ulong>();
             Resources = new List<Resource>();
             GenerateResources();
         }
@@ -37,10 +37,42 @@ namespace The_Storyteller.Models.MMap
 
         public abstract string GetTypeOfCase();
 
+        public XmlElement Serialize(XmlDocument doc)
+        {
+            XmlElement element = doc.CreateElement("case");
+            element.SetAttribute("type", GetTypeOfCase().ToLower());
+            element.SetAttribute("locationX", Location.XPosition.ToString());
+            element.SetAttribute("locationY", Location.YPosition.ToString());
+            element.SetAttribute("isAvailable", this.IsAvailable.ToString());
+            element.SetAttribute("villageId", this.VillageId.ToString());
+
+            XmlElement resources = doc.CreateElement("resources");
+            foreach(Resource r in Resources)
+            {
+                resources.AppendChild(r.Serialize(doc));
+            }
+
+            XmlElement characters = doc.CreateElement("characters");
+            foreach (ulong charId in CharactersPresent)
+            {
+                XmlElement charXml = doc.CreateElement(charId.ToString());
+                resources.AppendChild(charXml);
+            }
+
+            element.AppendChild(resources);
+            element.AppendChild(characters);
+            return element;
+
+        }
+
         public void AddNewCharacter(Character c)
         {
-            if (CharacterPresent == null) return;
-            CharacterPresent.Add(c.Id);
+            if (CharactersPresent == null)
+            {
+                return;
+            }
+
+            CharactersPresent.Add(c.Id);
         }
 
         public bool IsCentralCase()
@@ -50,15 +82,19 @@ namespace The_Storyteller.Models.MMap
 
         public List<ulong> GetCharactersOnCase()
         {
-            return this.CharacterPresent;
+            return CharactersPresent;
         }
 
         public void RemoveCharacter(Character c)
         {
-            if (CharacterPresent == null) return;
-            CharacterPresent.Remove(c.Id);
+            if (CharactersPresent == null)
+            {
+                return;
+            }
+
+            CharactersPresent.Remove(c.Id);
         }
     }
 
-   
+
 }

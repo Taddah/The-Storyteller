@@ -1,4 +1,5 @@
-﻿using The_Storyteller.Models.MGameObject.Resources;
+﻿using System.Xml;
+using The_Storyteller.Models.MGameObject.Resources;
 
 namespace The_Storyteller.Models.MMap.MCase
 {
