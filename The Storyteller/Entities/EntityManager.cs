@@ -11,7 +11,7 @@ namespace The_Storyteller.Entities
         public EntityManager()
         {
             Guilds = new GuildManager("guilds.json");
-            Characters = new CharacterManager("characters.json");
+            Characters = new CharacterManager("characters.xml");
             Map = new MapManager("map.xml");
             Villages = new VillageManager("villages.json");
             Inventories = new InventoryManager("inventories.xml");

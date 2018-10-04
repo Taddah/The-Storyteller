@@ -86,7 +86,7 @@ namespace The_Storyteller.Models.MMap.MCase
             //characters
             foreach (XmlElement resXml in caseXml.GetElementsByTagName("characters")[0].ChildNodes)
             {
-                if (ulong.TryParse(resXml.Value, out ulong charId))
+                if (ulong.TryParse(resXml.GetAttribute("id"), out ulong charId))
                 {
                     charList.Add(charId);
                 }

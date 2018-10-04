@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Entities.Tools;
 using The_Storyteller.Models.MCharacter;
+using The_Storyteller.Models.MGameObject.Resources;
 using The_Storyteller.Models.MMap;
 
 namespace The_Storyteller.Commands.CMap
@@ -25,13 +26,13 @@ namespace The_Storyteller.Commands.CMap
         [Command("caseinfo")]
         public async Task CaseInfoCommand(CommandContext ctx)
         {
-            //Vérification de base character + guild
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
-                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
+            //Vérification de base character + guild && pas en DM
+            if (!dep.Entities.Characters.IsPresent(ctx.User.Id)
+                || (!ctx.Channel.IsPrivate) && !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
-            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id);
             Region currentRegion = dep.Entities.Map.GetRegionByLocation(character.Location);
             Case currentCase =currentRegion.GetCase(character.Location);
 
@@ -104,6 +105,11 @@ namespace The_Storyteller.Commands.CMap
                 caseInfo.Add("West : unknown");
             }
 
+            List<string> resourcesInfo = new List<string>();
+            foreach (Resource r in currentCase.Resources)
+            {
+                resourcesInfo.Add(r.Name + " - " + r.Quantity);
+            }
 
             List<CustomEmbedField> attributes = new List<CustomEmbedField>
             {
@@ -122,14 +128,28 @@ namespace The_Storyteller.Commands.CMap
                     Name = "Case around",
                     Attributes = caseInfo
                 }
+                ,
+                new CustomEmbedField()
+                {
+                    Name = "Resources available",
+                    Attributes = resourcesInfo
+                }
             };
 
             var title = "Case information";
             var embed = dep.Embed.CreateDetailledEmbed(title, attributes, inline: true);
 
-            var dm = await ctx.Member.CreateDmChannelAsync();
-            await dm.SendMessageAsync(embed: embed);
-            await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
+            if (!ctx.Channel.IsPrivate)
+            {
+                var dm = await ctx.Member.CreateDmChannelAsync();
+                await dm.SendMessageAsync(embed: embed);
+                await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
+            }
+            else
+            {
+                await ctx.Channel.SendMessageAsync(embed: embed);
+            }
+            
 
         }
     }

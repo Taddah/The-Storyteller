@@ -6,8 +6,9 @@ using System;
 using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Models.MCharacter;
+using The_Storyteller.Models.MCharacter.MCharacterSkills;
 using The_Storyteller.Models.MGameObject.Equipment.Weapons;
-using The_Storyteller.Models.MGameObject.Resources;
+using The_Storyteller.Models.MGameObject.Resources.Constructions;
 
 namespace The_Storyteller.Commands.CCharacter
 {
@@ -29,7 +30,7 @@ namespace The_Storyteller.Commands.CCharacter
         public async Task StartCommand(CommandContext ctx)
         {
             //Vérification de base
-            if (dep.Entities.Characters.IsPresent(ctx.Member.Id))
+            if (dep.Entities.Characters.IsPresent(ctx.User.Id))
             {
                 await ctx.RespondAsync(dep.Dialog.GetString("errorAlreadyRegistered"));
                 return;
@@ -47,11 +48,11 @@ namespace The_Storyteller.Commands.CCharacter
             //Création du Character
             Character c = new Character
             {
-                Id = ctx.Member.Id
+                Id = ctx.User.Id
             };
 
             //1 On récupère le truename puis on enregistre directement pour éviter les doublons
-            DiscordEmbedBuilder embedTrueName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("startIntroAskTruename"),
+            DiscordEmbedBuilder embedTrueName = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("startIntroAskTruename"),
                 dep.Dialog.GetString("startIntroInfoTruename"));
             await channel.SendMessageAsync(embed: embedTrueName);
             bool trueNameIsValid = false;
@@ -72,14 +73,14 @@ namespace The_Storyteller.Commands.CCharacter
                     }
                     else
                     {
-                        DiscordEmbedBuilder embedErrorTrueName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("startIntroTrueTaken"));
+                        DiscordEmbedBuilder embedErrorTrueName = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("startIntroTrueTaken"));
                         await channel.SendMessageAsync(embed: embedErrorTrueName);
                     }
                 }
             } while (!trueNameIsValid);
 
             //2 On demande le nom
-            DiscordEmbedBuilder embedName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("startIntroAskName"),
+            DiscordEmbedBuilder embedName = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("startIntroAskName"),
                 dep.Dialog.GetString("startIntroInfoName"));
             await channel.SendMessageAsync(embed: embedName);
 
@@ -91,7 +92,7 @@ namespace The_Storyteller.Commands.CCharacter
             }
 
             //3 Puis finalement le sexe
-            DiscordEmbedBuilder embedSex = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("startIntroAskGender"),
+            DiscordEmbedBuilder embedSex = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("startIntroAskGender"),
                 dep.Dialog.GetString("startIntroInfoGender"));
             await channel.SendMessageAsync(embed: embedSex);
 
@@ -111,12 +112,15 @@ namespace The_Storyteller.Commands.CCharacter
                     c.Sex = Sex.Female;
                 }
             }
-            else c.Sex = Sex.Male;
+            else
+            {
+                c.Sex = Sex.Male;
+            }
 
             //Si le nom a bien été rentré, on créer le personnage
-            if(c.Name != null)
-            { 
-                DiscordEmbedBuilder embedFinal = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("startIntroConclude", c));
+            if (c.Name != null)
+            {
+                DiscordEmbedBuilder embedFinal = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("startIntroConclude", c));
                 await channel.SendMessageAsync(embed: embedFinal);
 
                 c.Level = 1;
@@ -136,7 +140,7 @@ namespace The_Storyteller.Commands.CCharacter
                 };
 
 
-
+                //INVENTAIRE
                 CharacterInventory inv = new CharacterInventory
                 {
                     Id = c.Id
@@ -152,11 +156,14 @@ namespace The_Storyteller.Commands.CCharacter
                     Hand = 2
                 });
 
-                dep.Entities.Inventories.AddInventory(inv);
+                c.Skills.Add(new LoggerSkill());
                 
+
+                dep.Entities.Inventories.AddInventory(inv);
+
                 c.OriginRegionName = dep.Entities.Map.GetRegionByLocation(dep.Entities.Guilds.GetGuildById(ctx.Guild.Id).SpawnLocation).Name;
                 c.Profession = Profession.Peasant;
-                
+
                 dep.Entities.Map.GetCase(c.Location).AddNewCharacter(c);
                 dep.Entities.Characters.EditCharacter(c);
             }

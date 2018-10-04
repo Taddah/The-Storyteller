@@ -30,15 +30,15 @@ namespace The_Storyteller.Commands.CVillage
         public async Task VillageApplicantCommand(CommandContext ctx)
         {
             //Vérification de base character + guild + roi
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
-                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id)
-                || dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id).Profession != Profession.King)
+            if (!dep.Entities.Characters.IsPresent(ctx.User.Id)
+               || (!ctx.Channel.IsPrivate) && !dep.Entities.Guilds.IsPresent(ctx.Guild.Id)
+                || dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id).Profession != Profession.King)
             {
                 return;
             }
 
             InteractivityModule interactivity = ctx.Client.GetInteractivityModule();
-            var character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            var character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id);
             var village = dep.Entities.Villages.GetVillageByName(character.VillageName);
 
             List<string> waitingCharacter = new List<string>();
@@ -85,7 +85,7 @@ namespace The_Storyteller.Commands.CVillage
 
                     if (applicant == null)
                     {
-                        var embedError = dep.Embed.CreateBasicEmbed(ctx.Member, $"{name} was not found among the candidates.");
+                        var embedError = dep.Embed.CreateBasicEmbed(ctx.User, $"{name} was not found among the candidates.");
                         await dm.SendMessageAsync(embed: embedError);
                     }
                     else
@@ -95,7 +95,7 @@ namespace The_Storyteller.Commands.CVillage
                             //Verifier si pas accepté ailleurs
                             if(applicant.VillageName != null)
                             {
-                                var embedErrorVillage = dep.Embed.CreateBasicEmbed(ctx.Member, $"{name} is already member of another village");
+                                var embedErrorVillage = dep.Embed.CreateBasicEmbed(ctx.User, $"{name} is already member of another village");
                                 await dm.SendMessageAsync(embed: embedErrorVillage);
                             }
                             else
@@ -104,7 +104,7 @@ namespace The_Storyteller.Commands.CVillage
                                 village.AddInhabitant(applicant);
                                 applicant.Profession = Profession.Villager;
 
-                                var embedError = dep.Embed.CreateBasicEmbed(ctx.Member, $"{name} has been accepted");
+                                var embedError = dep.Embed.CreateBasicEmbed(ctx.User, $"{name} has been accepted");
                                 await dm.SendMessageAsync(embed: embedError);
 
                                 var embedAccepted = dep.Embed.CreateBasicEmbed(applicantDiscordMember, $"Congratulation, you have been accepted in village {village.Name}!");
@@ -115,7 +115,7 @@ namespace The_Storyteller.Commands.CVillage
                         {
                             village.WaitingList.Remove(applicant.Id);
 
-                            var embedError = dep.Embed.CreateBasicEmbed(ctx.Member, $"{name} has been refused");
+                            var embedError = dep.Embed.CreateBasicEmbed(ctx.User, $"{name} has been refused");
                             await dm.SendMessageAsync(embed: embedError);
 
                             var embedAccepted = dep.Embed.CreateBasicEmbed(applicantDiscordMember, $"I am sorry to inform you that the village of {village.Name} has declined your candidature.");

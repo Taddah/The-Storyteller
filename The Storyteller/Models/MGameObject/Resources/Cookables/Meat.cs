@@ -1,13 +1,13 @@
 using System.Xml;
 
-namespace The_Storyteller.Models.MGameObject.Resources
+namespace The_Storyteller.Models.MGameObject.Resources.Cookables
 {
-    public class Stone : Resource
+    public class Meat : Resource
     {
 
-        public Stone(int quantity = 0)
+        public Meat(int quantity = 0)
         {
-            Name = "Stone";
+            Name = "Meat";
             Quantity = quantity;
         }
 
@@ -15,7 +15,7 @@ namespace The_Storyteller.Models.MGameObject.Resources
         {
             if (!int.TryParse(element.GetAttribute("quantity"), out int quantity)) quantity = 0;
 
-                return new Stone
+                return new Meat
                 {
                     Name = element.GetAttribute("name"),
                     Quantity = quantity
@@ -25,7 +25,7 @@ namespace The_Storyteller.Models.MGameObject.Resources
         public override XmlElement Serialize(XmlDocument doc)
         {
             XmlElement element = doc.CreateElement("object");
-            element.SetAttribute("type", "stone");
+            element.SetAttribute("type", "meat");
             element.SetAttribute("name", this.Name);
             element.SetAttribute("quantity", this.Quantity.ToString());
 

@@ -15,7 +15,7 @@ namespace The_Storyteller.Models.MGameObject.Resources.Ore
         {
             if (!int.TryParse(element.GetAttribute("quantity"), out int quantity)) quantity = 0;
 
-                return new Wood
+                return new Iron
                 {
                     Name = element.GetAttribute("name"),
                     Quantity = quantity

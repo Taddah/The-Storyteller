@@ -24,13 +24,13 @@ namespace The_Storyteller.Commands.CCharacter
         public async Task JoinVillageCommand(CommandContext ctx)
         {
             //Vérification de base character + guild
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
+            if (!dep.Entities.Characters.IsPresent(ctx.User.Id)
                 || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
 
-            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id);
 
             if(character.VillageName != null && character.Profession != Profession.King)
             {
@@ -39,12 +39,12 @@ namespace The_Storyteller.Commands.CCharacter
                 character.VillageName = null;
                 village.Villagers.Remove(character.Id);
 
-                var embed = dep.Embed.CreateBasicEmbed(ctx.Member, "You have left the village of " + village.Name);
+                var embed = dep.Embed.CreateBasicEmbed(ctx.User, "You have left the village of " + village.Name);
                 await ctx.RespondAsync(embed: embed);
             }
             else
             {
-                var embed = dep.Embed.CreateBasicEmbed(ctx.Member, "You cannot leave your village, either because you are the king or because you are not part of any village");
+                var embed = dep.Embed.CreateBasicEmbed(ctx.User, "You cannot leave your village, either because you are the king or because you are not part of any village");
                 await ctx.RespondAsync(embed: embed);
             }
         }

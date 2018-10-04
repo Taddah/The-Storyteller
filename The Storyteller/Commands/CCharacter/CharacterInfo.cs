@@ -29,8 +29,9 @@ namespace The_Storyteller.Commands.CCharacter
         [Command("info")]
         public async Task CharacterInfoCommand(CommandContext ctx, params string[] name)
         {
-            //Vérification de base character + guild
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id))
+            //Vérification de base character + guild && pas en DM
+            if (!dep.Entities.Characters.IsPresent(ctx.User.Id)
+                || (!ctx.Channel.IsPrivate) && !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
@@ -38,14 +39,20 @@ namespace The_Storyteller.Commands.CCharacter
             string strName = "";
             Character c;
             DiscordMemberConverter dmc = new DiscordMemberConverter();
-            DiscordDmChannel channel = await ctx.Member.CreateDmChannelAsync();
+
+            DiscordDmChannel channel;
+            if (!ctx.Channel.IsPrivate)
+                channel = await ctx.Member.CreateDmChannelAsync();
+            else
+                channel = (DiscordDmChannel) ctx.Channel;
 
             //Pas de paramètre, on retourne les informations de l'auteur
             if (name.Length == 0)
             {
-                c = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+                c = dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id);
                 await channel.SendMessageAsync(embed: GetPersonalInfo(c));
-                await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
+                if (!ctx.Channel.IsPrivate)
+                    await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
                 return;
             }
 
@@ -57,7 +64,8 @@ namespace The_Storyteller.Commands.CCharacter
                 if (c != null)
                 {
                     await channel.SendMessageAsync(embed: GetDetailledInfo(c));
-                    await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
+                    if (!ctx.Channel.IsPrivate)
+                        await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
                     return;
                 }
                 else
@@ -77,14 +85,21 @@ namespace The_Storyteller.Commands.CCharacter
                 //Trouvé, retourne info basique
                 if (c != null)
                 {
-                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("publicInfo", c),
+                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.User
+                        , dep.Dialog.GetString("publicInfo", c),
                     dep.Dialog.GetString("needTrueName"));
-                    await ctx.RespondAsync(embed: embed);
+                    if (!ctx.Channel.IsPrivate)
+                        await ctx.RespondAsync(embed: embed);
+                    else
+                        await channel.SendMessageAsync(embed: embed);
                     return;
                 }
                 else
                 {
-                    await ctx.RespondAsync(dep.Dialog.GetString("errorCharacterUnknown"));
+                    if (!ctx.Channel.IsPrivate)
+                        await ctx.RespondAsync(dep.Dialog.GetString("errorCharacterUnknown"));
+                    else
+                        await channel.SendMessageAsync(dep.Dialog.GetString("errorCharacterUnknown"));
                     return;
                 }
             }
@@ -98,7 +113,8 @@ namespace The_Storyteller.Commands.CCharacter
             if (c != null)
             {
                 await channel.SendMessageAsync(embed: GetDetailledInfo(c));
-                await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
+                if (!ctx.Channel.IsPrivate)
+                    await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
                 return;
             }
             //Le nom
@@ -107,19 +123,39 @@ namespace The_Storyteller.Commands.CCharacter
                 c = dep.Entities.Characters.GetCharacterByName(strName);
                 if(c != null)
                 {
-                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("publicInfo", c),
+                    DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("publicInfo", c),
                     dep.Dialog.GetString("needTrueName"));
-                    await ctx.RespondAsync(embed: embed);
+                    if (!ctx.Channel.IsPrivate)
+                        await ctx.RespondAsync(embed: embed);
+                    else
+                        await channel.SendMessageAsync(embed: embed);
                     return;
                 }
             }
 
-            await ctx.RespondAsync(dep.Dialog.GetString("errorCharacterUnknown"));
+            if (!ctx.Channel.IsPrivate)
+                await ctx.RespondAsync(dep.Dialog.GetString("errorCharacterUnknown"));
+            else
+                await channel.SendMessageAsync(dep.Dialog.GetString("errorCharacterUnknown"));
+            return;
         }
 
         public DiscordEmbedBuilder GetPersonalInfo(Character c)
         {
             Inventory inv = dep.Entities.Inventories.GetInventoryById(c.Id);
+
+            //Les skills du character
+            //Affichage seulement si level > 0
+
+            List<string> charSkills = new List<string>();
+            foreach(CharacterSkills cs in c.Skills)
+            {
+                if (cs.Level > 0)
+                {
+                    charSkills.Add($"{cs.Name} - {cs.Level}  ({cs.Experience}/{cs.GetExperienceForNextLevel()})");
+                }
+            }
+
             List<CustomEmbedField> attributes = new List<CustomEmbedField>
             {
 
@@ -164,6 +200,12 @@ namespace The_Storyteller.Commands.CCharacter
                         "Money: " + inv.GetMoney(),
                         $"To view your inventory, type {Config.Instance.Prefix}inventory"
                     }
+                },
+                //4 Compétences
+                new CustomEmbedField()
+                {
+                    Name = "Skills",
+                    Attributes = charSkills
                 }
             };
 

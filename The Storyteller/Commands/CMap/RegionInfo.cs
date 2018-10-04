@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using DSharpPlus.CommandsNext;
+﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using System.Threading.Tasks;
 using The_Storyteller.Entities;
 using The_Storyteller.Models.MMap;
 
@@ -22,34 +22,37 @@ namespace The_Storyteller.Commands.CMap
         [Command("regioninfo")]
         public async Task RegionInfoCommand(CommandContext ctx, params string[] name)
         {
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)) return;
+            //Vérification de base character + guild && pas en DM
+            if (!dep.Entities.Characters.IsPresent(ctx.User.Id)
+                || (!ctx.Channel.IsPrivate) && !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
+            {
+                return;
+            }
 
             Region r;
 
             if (name.Length > 0)
             {
-                var strName = string.Join(" ", name);
+                string strName = string.Join(" ", name);
                 r = dep.Entities.Map.GetRegionByName(strName);
             }
             else
             {
-                var userLoc = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id).Location;
+                Location userLoc = dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id).Location;
                 r = dep.Entities.Map.GetRegionByLocation(userLoc);
             }
 
             if (r == null)
             {
-                await ctx.RespondAsync(embed: dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("regionNotFound"),
+                await ctx.RespondAsync(embed: dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("regionNotFound"),
                     withPicture: true));
                 return;
             }
 
-           var embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("regionDescription", region: r));
+            DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("regionDescription", region: r));
 
-           await ctx.RespondAsync(embed: embed);
-            
+            await ctx.Channel.SendMessageAsync(embed: embed);
+
         }
-
-
     }
 }

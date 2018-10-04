@@ -92,6 +92,7 @@ namespace The_Storyteller
             _cnext.RegisterCommands<Commands.CCharacter.Trade>();
             _cnext.RegisterCommands<Commands.CCharacter.JoinVillage>();
             _cnext.RegisterCommands<Commands.CCharacter.LeaveVillage>();
+            _cnext.RegisterCommands<Commands.CCharacter.Harvest>();
 
 
             /////////GUILD COMMANDS

@@ -32,7 +32,7 @@ namespace The_Storyteller.Commands.CVillage
         public async Task CreateVillageCommand(CommandContext ctx)
         {
             //Vérification de base character + guild
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
+            if (!dep.Entities.Characters.IsPresent(ctx.User.Id)
                 || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
@@ -40,13 +40,13 @@ namespace The_Storyteller.Commands.CVillage
 
             Guild guild = dep.Entities.Guilds.GetGuildById(ctx.Guild.Id);
             Region region = dep.Entities.Map.GetRegionByName(guild.RegionName);
-            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id);
             
 
             if (region == null || region.GetVillageId() != ulong.MinValue|| !character.Location.Equals(region.GetCentralCase().Location))
             {
                 //Region n'appartient pas à un serveur, a déjà un village ou case pas adaptée, impossible de construire ici
-                DiscordEmbedBuilder embedNotPossible = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("createVillageNotPossible", character: character, region: region));
+                DiscordEmbedBuilder embedNotPossible = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("createVillageNotPossible", character: character, region: region));
                 await ctx.RespondAsync(embed: embedNotPossible);
                 return;
             }
@@ -56,7 +56,7 @@ namespace The_Storyteller.Commands.CVillage
             if (inv.GetMoney() < 500)
             {
                 //Trop pauvre pour construire un village ..
-                DiscordEmbedBuilder embedNoMoney = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("createVillageNoMoney", character: character));
+                DiscordEmbedBuilder embedNoMoney = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("createVillageNoMoney", character: character));
                 await ctx.RespondAsync(embed: embedNoMoney);
                 return;
             }
@@ -66,7 +66,7 @@ namespace The_Storyteller.Commands.CVillage
             InteractivityModule interactivity = ctx.Client.GetInteractivityModule();
             Village village = new Village();
             //1 Demander le nom
-            DiscordEmbedBuilder embedVillageName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("createVillageAskName"));
+            DiscordEmbedBuilder embedVillageName = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("createVillageAskName"));
             await ctx.RespondAsync(embed: embedVillageName);
             bool VillageName = false;
             do
@@ -85,7 +85,7 @@ namespace The_Storyteller.Commands.CVillage
                     }
                     else
                     {
-                        DiscordEmbedBuilder embedErrorTrueName = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("startIntroTrueTaken"));
+                        DiscordEmbedBuilder embedErrorTrueName = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("startIntroTrueTaken"));
                         await ctx.RespondAsync(embed: embedErrorTrueName);
                     }
                 }
@@ -140,7 +140,7 @@ namespace The_Storyteller.Commands.CVillage
             dep.Entities.Villages.AddVillage(village);
 
             //Bravo, village créé
-            DiscordEmbedBuilder embedVillageCreated = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("createVillageDone", character: character, village: village));
+            DiscordEmbedBuilder embedVillageCreated = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("createVillageDone", character: character, village: village));
             await ctx.RespondAsync(embed: embedVillageCreated);
 
         }

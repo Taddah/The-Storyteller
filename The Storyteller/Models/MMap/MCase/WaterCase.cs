@@ -1,4 +1,4 @@
-﻿using The_Storyteller.Models.MGameObject.Resources;
+﻿using The_Storyteller.Models.MGameObject.Resources.Cookables;
 
 namespace The_Storyteller.Models.MMap.MCase
 {

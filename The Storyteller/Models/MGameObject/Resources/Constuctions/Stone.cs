@@ -1,12 +1,13 @@
-﻿using System.Xml;
+using System.Xml;
 
-namespace The_Storyteller.Models.MGameObject.Resources
+namespace The_Storyteller.Models.MGameObject.Resources.Constructions
 {
-    class Water : Resource
+    public class Stone : Resource
     {
-        public Water(int quantity = 0)
+
+        public Stone(int quantity = 0)
         {
-            Name = "Water";
+            Name = "Stone";
             Quantity = quantity;
         }
 
@@ -14,17 +15,17 @@ namespace The_Storyteller.Models.MGameObject.Resources
         {
             if (!int.TryParse(element.GetAttribute("quantity"), out int quantity)) quantity = 0;
 
-            return new Water
-            {
-                Name = element.GetAttribute("name"),
-                Quantity = quantity
-            };
+                return new Stone
+                {
+                    Name = element.GetAttribute("name"),
+                    Quantity = quantity
+                };
         }
 
         public override XmlElement Serialize(XmlDocument doc)
         {
             XmlElement element = doc.CreateElement("object");
-            element.SetAttribute("type", "water");
+            element.SetAttribute("type", "stone");
             element.SetAttribute("name", this.Name);
             element.SetAttribute("quantity", this.Quantity.ToString());
 

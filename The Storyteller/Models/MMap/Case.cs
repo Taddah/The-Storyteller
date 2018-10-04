@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using The_Storyteller.Models.MCharacter;
 using The_Storyteller.Models.MGameObject.Resources;
@@ -55,8 +56,9 @@ namespace The_Storyteller.Models.MMap
             XmlElement characters = doc.CreateElement("characters");
             foreach (ulong charId in CharactersPresent)
             {
-                XmlElement charXml = doc.CreateElement(charId.ToString());
-                resources.AppendChild(charXml);
+                XmlElement charXml = doc.CreateElement("character");
+                charXml.SetAttribute("id", charId.ToString());
+                characters.AppendChild(charXml);
             }
 
             element.AppendChild(resources);
@@ -75,10 +77,7 @@ namespace The_Storyteller.Models.MMap
             CharactersPresent.Add(c.Id);
         }
 
-        public bool IsCentralCase()
-        {
-            return (Location.XPosition + Location.YPosition) % 9 != 0;
-        }
+        public bool IsCentralCase() => (Location.XPosition + Location.YPosition) % 9 == 0;
 
         public List<ulong> GetCharactersOnCase()
         {
@@ -93,6 +92,11 @@ namespace The_Storyteller.Models.MMap
             }
 
             CharactersPresent.Remove(c.Id);
+        }
+
+        public Resource GetRessource(string name)
+        {
+            return Resources.SingleOrDefault(res => res.Name.ToLower() == name.ToLower());
         }
     }
 

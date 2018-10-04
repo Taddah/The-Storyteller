@@ -1,11 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
+using System.Xml;
 using The_Storyteller.Models.MCharacter;
 
 namespace The_Storyteller.Entities.Game
@@ -34,32 +33,106 @@ namespace The_Storyteller.Entities.Game
             {
                 return new List<Character>();
             }
-            
 
-            using (StreamReader sr = new StreamReader(_filename))
+            List<Character> listCha = new List<Character>();
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(_filename);
+
+            //get inventories
+            XmlNode characters = doc.GetElementsByTagName("characters").Item(0);
+
+            //Pour chaque inventaire
+            foreach (XmlElement character in characters.ChildNodes)
             {
-
-                List<Character> res = JsonConvert.DeserializeObject<List<Character>>(sr.ReadToEnd());
-
-                if (res != null)
+                if (!ulong.TryParse(character.GetAttribute("id"), out ulong id))
                 {
-                    return res;
+                    //Pas d'id, on stop le chargement de ce personnage
+                    break;
                 }
-                return new List<Character>();
+
+                int.TryParse(character.GetAttribute("level"), out int level);
+                int.TryParse(character.GetAttribute("experience"), out int experience);
+                int.TryParse(character.GetAttribute("energy"), out int energy);
+                int.TryParse(character.GetAttribute("maxEnergy"), out int maxEnergy);
+                int.TryParse(character.GetAttribute("locationX"), out int locationX);
+                int.TryParse(character.GetAttribute("locationY"), out int locationY);
+
+
+                Character cha = new Character
+                {
+                    Id = id,
+                    Energy = energy,
+                    MaxEnergy = maxEnergy,
+                    Level = level,
+                    Experience = experience,
+                    Location = new Models.MMap.Location(locationX, locationY),
+                    Name = character.GetAttribute("name"),
+                    OriginRegionName = character.GetAttribute("originRegionName"),
+                    Profession = (Profession)Enum.Parse(typeof(Profession), character.GetAttribute("profession")),
+                    Sex = (Sex)Enum.Parse(typeof(Sex), character.GetAttribute("sex")),
+                    TrueName = character.GetAttribute("trueName"),
+                    VillageName = character.GetAttribute("villageName"),
+                    Stats = CharacterStats.Deserialize((XmlElement)character.ChildNodes[0]),
+                    Skills = CharacterSkills.Deserialize((XmlElement)character.ChildNodes[1])
+                };
+                listCha.Add(cha);
             }
+            
+            return listCha;
         }
 
         private async Task SaveToFile()
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(List<Character>));
+            XmlDocument doc = new XmlDocument();
+            XmlElement root = doc.CreateElement("characters");
 
-            using (StreamWriter sw = new StreamWriter(_filename))
+            foreach (Character c in _characters)
             {
-                JsonSerializerSettings jset = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
-                await sw.WriteAsync(JsonConvert.SerializeObject(_characters));
+                XmlElement xmlCharacter = doc.CreateElement("character");
+
+                //General information
+                xmlCharacter.SetAttribute("id", c.Id.ToString());
+                xmlCharacter.SetAttribute("name", c.Name);
+                xmlCharacter.SetAttribute("trueName", c.TrueName);
+                xmlCharacter.SetAttribute("sex", c.Sex.ToString());
+                xmlCharacter.SetAttribute("level", c.Level.ToString());
+                xmlCharacter.SetAttribute("experience", c.Experience.ToString());
+                xmlCharacter.SetAttribute("energy", c.Energy.ToString());
+                xmlCharacter.SetAttribute("maxEnergy", c.MaxEnergy.ToString());
+                xmlCharacter.SetAttribute("locationX", c.Location.XPosition.ToString());
+                xmlCharacter.SetAttribute("locationY", c.Location.YPosition.ToString());
+                xmlCharacter.SetAttribute("origonRegionName", c.OriginRegionName);
+                xmlCharacter.SetAttribute("villageName", c.VillageName);
+                xmlCharacter.SetAttribute("profession", c.Profession.ToString());
+
+                //Character stats
+                xmlCharacter.AppendChild(c.Stats.Serialize(doc));
+
+                //Character skills
+                XmlElement xmlSkills = doc.CreateElement("skills");
+                foreach (CharacterSkills cs in c.Skills)
+                {
+                    XmlElement xmlCs = doc.CreateElement("skill");
+                    xmlCs.SetAttribute("name", cs.Name);
+                    xmlCs.SetAttribute("level", cs.Level.ToString());
+                    xmlCs.SetAttribute("experience", cs.Experience.ToString());
+                    xmlSkills.AppendChild(xmlCs);
+                }
+                xmlCharacter.AppendChild(xmlSkills);
+
+                root.AppendChild(xmlCharacter);
             }
 
+            doc.AppendChild(root);
 
+            await Task.Factory.StartNew(delegate
+            {
+                using (StreamWriter sw = new StreamWriter(_filename))
+                {
+                    doc.Save(sw);
+                }
+            });
         }
 
         private async Task DoPeriodicCharacterSave()

@@ -26,14 +26,15 @@ namespace The_Storyteller.Commands.CCharacter
         [Command("inventory")]
         public async Task ShowInventoryCommand(CommandContext ctx)
         {
-            //Vérification de base character + guild
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id))
+            //Vérification de base character + guild && pas en DM
+            if (!dep.Entities.Characters.IsPresent(ctx.User.Id)
+                || (!ctx.Channel.IsPrivate) && !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
 
             //1 Récupérer le Character et son inventaire
-            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id);
             Inventory inventory = dep.Entities.Inventories.GetInventoryById(character.Id);
 
             List<string> resourceList = new List<string>();
@@ -96,11 +97,18 @@ namespace The_Storyteller.Commands.CCharacter
 
             DiscordEmbedBuilder embed = dep.Embed.CreateDetailledEmbed(title, attributes, description, inline: true);
 
-            DiscordDmChannel dm = await ctx.Member.CreateDmChannelAsync();
+            DiscordDmChannel dm;
+            if (!ctx.Channel.IsPrivate)
+                dm = await ctx.Member.CreateDmChannelAsync();
+            else
+                dm = (DiscordDmChannel)ctx.Channel;
+
             await dm.SendMessageAsync(embed: embed);
-            await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
 
-
+            if (!ctx.Channel.IsPrivate)
+            {
+                await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
+            }
         }
     }
 }

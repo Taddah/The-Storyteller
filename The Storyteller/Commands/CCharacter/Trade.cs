@@ -1,5 +1,6 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.CommandsNext.Converters;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
 using System;
@@ -27,22 +28,62 @@ namespace The_Storyteller.Commands.CCharacter
 
 
         [Command("trade")]
-        public async Task TradeCommand(CommandContext ctx, DiscordMember member)
+        public async Task TradeCommand(CommandContext ctx, params string[] name)
         {
-            //Vérification de base character + guild
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
-                || !dep.Entities.Characters.IsPresent(member.Id)
-                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
+            //Vérification de base character + guild + name fourni
+            if (!dep.Entities.Characters.IsPresent(ctx.User.Id)
+                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id)
+                || name.Length == 0)
             {
                 return;
             }
 
             InteractivityModule interactivity = ctx.Client.GetInteractivityModule();
+            DiscordMemberConverter dmc = new DiscordMemberConverter();
             bool tradeIsOver = false;
 
             //Nos deux character
-            Character currentCharacter = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
-            Character otherCharacter = dep.Entities.Characters.GetCharacterByDiscordId(member.Id);
+            Character currentCharacter = dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id);
+            DiscordDmChannel dmCurrentCharacter = await ctx.Member.CreateDmChannelAsync();
+
+            Character otherCharacter;
+
+            //Récupérer ID 2ème character
+            string strName = string.Join(" ", name);
+
+            if (dmc.TryConvert(strName, ctx, out DiscordMember member))
+            {
+                otherCharacter = dep.Entities.Characters.GetCharacterByDiscordId(member.Id);
+            }
+            else
+            {
+                otherCharacter = dep.Entities.Characters.GetCharacterByName(strName);
+            }
+            //Toujours rien ? -> Test par truenae
+            if(otherCharacter == null)
+            {
+                otherCharacter = dep.Entities.Characters.GetCharacterByTrueName(strName);
+            }
+
+            //Vérification character2
+            if(otherCharacter == null)
+            {
+                var embedNotFound = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("errorCharacterNotExist"));
+                await ctx.Channel.SendMessageAsync(embed: embedNotFound);
+                return;
+            }
+
+            //Vérification même location
+            if(!currentCharacter.Location.Equals(otherCharacter.Location))
+            {
+                var embedNotOnSameCase= dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("errorCharacterNotOnSameMapForTrade"));
+                await ctx.Channel.SendMessageAsync(embed: embedNotOnSameCase);
+                return;
+            }
+
+            var embedWaitingAnswer = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("waitingAnswer", otherCharacter));
+            await ctx.Channel.SendMessageAsync(embed: embedWaitingAnswer);
+
 
             //Les deux inventaires
             Inventory invC1 = dep.Entities.Inventories.GetInventoryById(currentCharacter.Id);
@@ -52,15 +93,14 @@ namespace The_Storyteller.Commands.CCharacter
             List<GameObject> itemFromC1 = new List<GameObject>();
             List<GameObject> itemFromC2 = new List<GameObject>();
 
-            //Ouverture d'un DM avec chacun => privacy trade !
-            DiscordDmChannel dmCurrentCharacter = await ctx.Member.CreateDmChannelAsync();
-            DiscordDmChannel dmOtherCharacter = await member.CreateDmChannelAsync();
+            var applicantDiscordMember = await ctx.Client.GetUserAsync(otherCharacter.Id);
+            DiscordDmChannel dmOtherCharacter = await ctx.Client.CreateDmAsync(applicantDiscordMember);
 
-
-            await ctx.RespondAsync($"{currentCharacter.Name} want to trade with you {member.Mention} ! Type {Config.Instance.Prefix}accept to start the trade.");
+            var embedProposeTrade = dep.Embed.CreateBasicEmbed(applicantDiscordMember, $"{currentCharacter.Name} want to trade with you ! Type {Config.Instance.Prefix}accept to start the trade.");
+            await dmOtherCharacter.SendMessageAsync(embed: embedProposeTrade);
 
             //1 Attendre que member accepte le trade
-            MessageContext msgAccept = await interactivity.WaitForMessageAsync(xm => xm.Author.Id == member.Id && xm.Content == $"{Config.Instance.Prefix}accept", TimeSpan.FromMinutes(1));
+            MessageContext msgAccept = await interactivity.WaitForMessageAsync(xm => xm.Author.Id == otherCharacter.Id && xm.Content == $"{Config.Instance.Prefix}accept", TimeSpan.FromMinutes(1));
             if (msgAccept != null)
             {
                 if (msgAccept.Message.Content != $"{Config.Instance.Prefix}accept")

@@ -1,4 +1,5 @@
-﻿using The_Storyteller.Models.MMap;
+﻿using System.Collections.Generic;
+using The_Storyteller.Models.MMap;
 
 namespace The_Storyteller.Models.MCharacter
 {
@@ -30,5 +31,6 @@ namespace The_Storyteller.Models.MCharacter
         public string OriginRegionName { get; set; }
         public string VillageName { get; set; }
         public Profession Profession { get; set; }
+        public List<CharacterSkills> Skills { get; set; } = new List<CharacterSkills>();
     }
 }

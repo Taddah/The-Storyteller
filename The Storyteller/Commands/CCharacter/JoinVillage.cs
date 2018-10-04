@@ -27,19 +27,19 @@ namespace The_Storyteller.Commands.CCharacter
         public async Task JoinVillageCommand(CommandContext ctx)
         {
             //Vérification de base character + guild
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
+            if (!dep.Entities.Characters.IsPresent(ctx.User.Id)
                 || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
 
-            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            Character character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id);
             Case currentCase = dep.Entities.Map.GetCase(character.Location);
 
             //1 check existence village + appartenance village
             if (character.VillageName != null || currentCase.VillageId == ulong.MinValue)
             {
-                DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("errorCantJoinVillage"));
+                DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("errorCantJoinVillage"));
                 await ctx.RespondAsync(embed: embed);
                 return;
             }
@@ -66,7 +66,7 @@ namespace The_Storyteller.Commands.CCharacter
             }
             else
             {
-                DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("error"));
+                DiscordEmbedBuilder embed = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("error"));
                 await ctx.RespondAsync(embed: embed);
             }
         }

@@ -29,13 +29,13 @@ namespace The_Storyteller.Commands.CVillage
         public async Task ExecuteGroupAsync(CommandContext ctx, params string[] name)
         {
             //Vérification de base character + guild
-            if (!dep.Entities.Characters.IsPresent(ctx.Member.Id)
-                || !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
+            if (!dep.Entities.Characters.IsPresent(ctx.User.Id)
+                || (!ctx.Channel.IsPrivate) && !dep.Entities.Guilds.IsPresent(ctx.Guild.Id))
             {
                 return;
             }
 
-            var character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.Member.Id);
+            var character = dep.Entities.Characters.GetCharacterByDiscordId(ctx.User.Id);
             var villageName = character.VillageName;
             var detailled = true;
                
@@ -51,22 +51,30 @@ namespace The_Storyteller.Commands.CVillage
 
             if (village == null)
             {
-                var embed = dep.Embed.CreateBasicEmbed(ctx.Member, dep.Dialog.GetString("errorNotPartOfVillage"));
+                var embed = dep.Embed.CreateBasicEmbed(ctx.User, dep.Dialog.GetString("errorNotPartOfVillage"));
                 await ctx.RespondAsync(embed: embed);
                 return;
             }
 
             var  embedVillage = GetVillageInfo(village, detailled);
 
+            DiscordDmChannel channel;
+            if (!ctx.Channel.IsPrivate)
+            {
+                channel = await ctx.Member.CreateDmChannelAsync();
+                await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
+            }
+            else
+                channel = (DiscordDmChannel)ctx.Channel;
+
             if (detailled)
             {
-                var dm = await ctx.Member.CreateDmChannelAsync();
-                await dm.SendMessageAsync(embed: embedVillage);
+                await channel.SendMessageAsync(embed: embedVillage);
                 await ctx.RespondAsync($"{ctx.Member.Mention} private message sent !");
             }
             else
             {
-                await ctx.RespondAsync(embed: embedVillage);
+                await ctx.Channel.SendMessageAsync(embed: embedVillage);
             }
             
         }

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using The_Storyteller.Models.MMap;
 using The_Storyteller.Models.MMap.MCase;
@@ -27,6 +29,26 @@ namespace The_Storyteller.Entities.Game
         {
             _filename = filename;
             _regions = LoadFromFile();
+
+            Task task = new Task(() => DoPeriodicCharacterSave());
+            task.Start();
+        }
+
+        private void DoPeriodicCharacterSave()
+        {
+            while (true)
+            {
+                try
+                {
+                    SaveToFile();
+                }
+                catch (IOException)
+                {
+
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(10));
+            }
         }
 
         private List<Region> LoadFromFile()

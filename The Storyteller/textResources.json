@@ -37,6 +37,10 @@
   "enterVillage": "You enter the village of $VILLAGE_NAME.",
   "errorCantJoinVillage": "You cannot join this village for one of the following reasons: You are not located in a village or you are already a resident of another village.",
   "joinVillageMPKing": "My king, someone wishes to join your village. You can consult the list of people who want to join you thanks to the command $PREFIXvillageapplicant",
-  "joinvillageConfirmWaiting": "The King has taken your request into consideration and you will be given an answer shortly."
+  "joinvillageConfirmWaiting": "The King has taken your request into consideration and you will be given an answer shortly.",
+  "errorCharacterNotExist": "This character does not exist",
+  "errorCharacterNotOnSameMapForTrade": "This character is too far from you to be able to trade",
+  "waitingAnswer": "Awaiting $CHARACTER_NAME's answer...",
+  "resourceNotAvailable":  "This resource can not be found near your location."
 
 }

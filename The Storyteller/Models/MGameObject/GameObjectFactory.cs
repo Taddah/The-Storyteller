@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
 using The_Storyteller.Models.MGameObject.Equipment.Weapons;
 using The_Storyteller.Models.MGameObject.Others;
 using The_Storyteller.Models.MGameObject.Resources;
+using The_Storyteller.Models.MGameObject.Resources.Constructions;
+using The_Storyteller.Models.MGameObject.Resources.Cookables;
 using The_Storyteller.Models.MGameObject.Resources.Ore;
 
 namespace The_Storyteller.Models.MGameObject
